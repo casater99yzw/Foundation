@@ -167,7 +167,7 @@ namespace X
 		sint32 counter = 1;
 	};
 
-	namespace ReferenceCountPtrConstruct
+	namespace Ownership
 	{
 		struct AcquireT
 		{
@@ -196,7 +196,7 @@ namespace X
 		{
 		}
 
-		explicit ReferenceCountPtr(T* p, ReferenceCountPtrConstruct::AcquireT) noexcept : ptr(p)
+		explicit ReferenceCountPtr(T* p, Ownership::AcquireT) noexcept : ptr(p)
 		{
 			if (ptr)
 			{
@@ -204,12 +204,12 @@ namespace X
 			}
 		}
 
-		explicit ReferenceCountPtr(T* p, ReferenceCountPtrConstruct::TransferT) noexcept : ptr(p)
+		explicit ReferenceCountPtr(T* p, Ownership::TransferT) noexcept : ptr(p)
 		{
 		}
 
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>
-		explicit ReferenceCountPtr(Y* y, ReferenceCountPtrConstruct::AcquireT) noexcept : ptr(y)
+		explicit ReferenceCountPtr(Y* y, Ownership::AcquireT) noexcept : ptr(y)
 		{
 			if (ptr)
 			{
@@ -218,7 +218,7 @@ namespace X
 		}
 
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>
-		explicit ReferenceCountPtr(Y* y, ReferenceCountPtrConstruct::TransferT) noexcept : ptr(y)
+		explicit ReferenceCountPtr(Y* y, Ownership::TransferT) noexcept : ptr(y)
 		{
 		}
 

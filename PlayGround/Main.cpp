@@ -44,10 +44,10 @@ int main()
 		assert(NTS::Count() == 0);
 		ReferenceCountPtr<DNTS, true> pdntsnull;
 
-		ReferenceCountPtr<DNTS, true> pdnts(new DNTS, ReferenceCountPtrConstruct::Transfer);
+		ReferenceCountPtr<DNTS, true> pdnts(new DNTS, Ownership::Transfer);
 
 		ReferenceCountPtr<NTS, true> pnts1 = pdnts;
-		ReferenceCountPtr<NTS, true> pnts2(pdnts.Get(), ReferenceCountPtrConstruct::Acquire);
+		ReferenceCountPtr<NTS, true> pnts2(pdnts.Get(), Ownership::Acquire);
 
 		assert(pnts1 == pdnts);
 		*pnts1 = *pnts2;
