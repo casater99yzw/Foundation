@@ -71,6 +71,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BaseType.h" />
+    <ClInclude Include="BitFlag.h" />
     <ClInclude Include="CompressedPair.h" />
     <ClInclude Include="ReferenceCount.h" />
   </ItemGroup>

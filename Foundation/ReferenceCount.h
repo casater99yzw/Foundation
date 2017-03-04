@@ -306,6 +306,20 @@ namespace X
 			}
 		}
 
+		template <class Y>
+		ReferenceCountPtr<Y, ThreadSafe> StaticCastTo() const
+		{
+			ReferenceCountPtr<Y, ThreadSafe> result(static_cast<Y*>(ptr), Ownership::Acquire);
+			return result;
+		}
+
+		template <class Y>
+		ReferenceCountPtr<Y, ThreadSafe> DynamicCastTo() const
+		{
+			ReferenceCountPtr<Y, ThreadSafe> result(dynamic_cast<Y*>(ptr), Ownership::Acquire);
+			return result;
+		}
+
 	private:
 
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>

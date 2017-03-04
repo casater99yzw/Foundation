@@ -16,5 +16,8 @@
     <ClInclude Include="BaseType.h">
       <Filter>Files</Filter>
     </ClInclude>
+    <ClInclude Include="BitFlag.h">
+      <Filter>Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

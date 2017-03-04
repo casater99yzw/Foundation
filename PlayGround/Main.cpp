@@ -2,6 +2,8 @@
 #define MemoryDebug
 #include "ReferenceCount.h"
 
+#include "BitFlag.h"
+
 #include <utility>
 #include <memory>
 #include <cassert>
@@ -37,6 +39,7 @@ int main()
 
 	struct DNTS : NTS
 	{
+		int i = 0;
 	};
 
 
@@ -55,7 +58,9 @@ int main()
 		assert(!(pdnts < pnts1));
 		assert(!(pdnts > pnts1));
 
+		pdnts->i = 42;
 		pnts1 = std::move(pdnts);
+		assert(pnts1.DynamicCastTo<DNTS>()->i == 42);
 
 		assert(NTS::Count() == 1);
 		constexpr bool noexceptrcp = noexcept(ReferenceCountPtr<DNTS, true>());
@@ -63,7 +68,21 @@ int main()
 	}
 	assert(NTS::Count() == 0);
 
+	constexpr auto bit0 = BitValue(0);
+	enum class SF
+	{
+		A = BitValue(0),
+		B = BitValue(1),
+		C = BitValue(2),
+	};
 
+	BitFlag<SF> sflag(SF::A);
+	sflag.SetBits(SF::B);
+	sflag.UnsetBits(SF::A | SF::B);
+	sflag.SetBits(~SF::C & SF::A);
+	sflag.UnsetBits(SF::B);
+	sflag.SetBits(SF::C);
+	sflag = SF::A | SF::B | SF::C;
 
 	return 0;
 }
