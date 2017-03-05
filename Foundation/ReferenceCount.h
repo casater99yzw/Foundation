@@ -4,7 +4,7 @@
 
 namespace X
 {
-	template <bool ThreadSafe = false>
+	template <bool ThreadSafe = true>
 	class ReferenceCountBase;
 
 	template <>
@@ -178,11 +178,11 @@ namespace X
 		} Transfer;
 	}
 
-	template <class T, bool ThreadSafe = false, class = std::enable_if_t<std::is_base_of<ReferenceCountBase<ThreadSafe>, T>::value>>
+	template <class T, class = std::enable_if_t<std::is_base_of<ReferenceCountBase<true>, T>::value || std::is_base_of<ReferenceCountBase<false>, T>::value>>
 	class ReferenceCountPtr
 	{
 	public:
-		template <class Y, bool ThreadSafe, class = std::enable_if_t<std::is_base_of<ReferenceCountBase<ThreadSafe>, T>::value>>
+		template <class Y, class = std::enable_if_t<std::is_base_of<ReferenceCountBase<true>, T>::value || std::is_base_of<ReferenceCountBase<false>, T>::value>>
 		friend class ReferenceCountPtr;
 	public:
 		~ReferenceCountPtr() noexcept
@@ -233,13 +233,13 @@ namespace X
 		}
 
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>
-		ReferenceCountPtr(ReferenceCountPtr<Y, ThreadSafe> const& other) noexcept
+		ReferenceCountPtr(ReferenceCountPtr<Y> const& other) noexcept
 		{
 			CopyIn(other);
 		}
 
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>
-		ReferenceCountPtr(ReferenceCountPtr<Y, ThreadSafe>&& other) noexcept
+		ReferenceCountPtr(ReferenceCountPtr<Y>&& other) noexcept
 		{
 			MoveIn(std::move(other));
 		}
@@ -257,14 +257,14 @@ namespace X
 		}
 
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>
-		ReferenceCountPtr& operator=(ReferenceCountPtr<Y, ThreadSafe> const& other) noexcept
+		ReferenceCountPtr& operator=(ReferenceCountPtr<Y> const& other) noexcept
 		{
 			CopyIn(other);
 			return *this;
 		}
 
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>
-		ReferenceCountPtr& operator=(ReferenceCountPtr<Y, ThreadSafe>&& other) noexcept
+		ReferenceCountPtr& operator=(ReferenceCountPtr<Y>&& other) noexcept
 		{
 			MoveIn(std::move(other));
 			return *this;
@@ -307,23 +307,23 @@ namespace X
 		}
 
 		template <class Y>
-		ReferenceCountPtr<Y, ThreadSafe> StaticCastTo() const
+		ReferenceCountPtr<Y> StaticCastTo() const
 		{
-			ReferenceCountPtr<Y, ThreadSafe> result(static_cast<Y*>(ptr), Ownership::Acquire);
+			ReferenceCountPtr<Y> result(static_cast<Y*>(ptr), Ownership::Acquire);
 			return result;
 		}
 
 		template <class Y>
-		ReferenceCountPtr<Y, ThreadSafe> DynamicCastTo() const
+		ReferenceCountPtr<Y> DynamicCastTo() const
 		{
-			ReferenceCountPtr<Y, ThreadSafe> result(dynamic_cast<Y*>(ptr), Ownership::Acquire);
+			ReferenceCountPtr<Y> result(dynamic_cast<Y*>(ptr), Ownership::Acquire);
 			return result;
 		}
 
 	private:
 
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>
-		void CopyIn(ReferenceCountPtr<Y, ThreadSafe> const& other) noexcept
+		void CopyIn(ReferenceCountPtr<Y> const& other) noexcept
 		{
 			if (other.ptr)
 			{
@@ -349,7 +349,7 @@ namespace X
 			}
 		}
 		template <class Y, class = std::enable_if_t<std::is_convertible<Y*, T*>::value>>
-		void MoveIn(ReferenceCountPtr<Y, ThreadSafe>&& other) noexcept
+		void MoveIn(ReferenceCountPtr<Y>&& other) noexcept
 		{
 			if (ptr)
 			{
@@ -365,112 +365,112 @@ namespace X
 
 
 
-	template <class T1, class T2, bool ThreadSafe>
-	constexpr bool operator==(ReferenceCountPtr<T1, ThreadSafe> const& left, ReferenceCountPtr<T2, ThreadSafe> const& right) noexcept
+	template <class T1, class T2>
+	constexpr bool operator==(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
 	{
 		using Common = std::common_type_t<T1*, T2*>;
 		return static_cast<Common>(left.Get()) == static_cast<Common>(right.Get());
 	}
 
-	template <class T1, class T2, bool ThreadSafe>
-	constexpr bool operator!=(ReferenceCountPtr<T1, ThreadSafe> const& left, ReferenceCountPtr<T2, ThreadSafe> const& right) noexcept
+	template <class T1, class T2>
+	constexpr bool operator!=(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
 	{
 		return !(left == right);
 	}
 
-	template <class T1, class T2, bool ThreadSafe>
-	constexpr bool operator<(ReferenceCountPtr<T1, ThreadSafe> const& left, ReferenceCountPtr<T2, ThreadSafe> const& right) noexcept
+	template <class T1, class T2>
+	constexpr bool operator<(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
 	{
 		using Common = std::common_type_t<T1*, T2*>;
 		return static_cast<Common>(left.Get()) < static_cast<Common>(right.Get());
 	}
 
-	template <class T1, class T2, bool ThreadSafe>
-	constexpr bool operator>=(ReferenceCountPtr<T1, ThreadSafe> const& left, ReferenceCountPtr<T2, ThreadSafe> const& right) noexcept
+	template <class T1, class T2>
+	constexpr bool operator>=(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
 	{
 		return !(left < right);
 	}
 
-	template <class T1, class T2, bool ThreadSafe>
-	constexpr bool operator>(ReferenceCountPtr<T1, ThreadSafe> const& left, ReferenceCountPtr<T2, ThreadSafe> const& right) noexcept
+	template <class T1, class T2>
+	constexpr bool operator>(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
 	{
 		return right < left;
 	}
 
-	template <class T1, class T2, bool ThreadSafe>
-	constexpr bool operator<=(ReferenceCountPtr<T1, ThreadSafe> const& left, ReferenceCountPtr<T2, ThreadSafe> const& right) noexcept
+	template <class T1, class T2>
+	constexpr bool operator<=(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
 	{
 		return !(right < left);
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator==(ReferenceCountPtr<T, ThreadSafe> const& left, nullptr_t) noexcept
+	template <class T>
+	constexpr bool operator==(ReferenceCountPtr<T> const& left, nullptr_t) noexcept
 	{
 		return !left;
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator==(nullptr_t, ReferenceCountPtr<T, ThreadSafe> const& right) noexcept
+	template <class T>
+	constexpr bool operator==(nullptr_t, ReferenceCountPtr<T> const& right) noexcept
 	{
 		return !right;
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator!=(ReferenceCountPtr<T, ThreadSafe> const& left, nullptr_t right) noexcept
+	template <class T>
+	constexpr bool operator!=(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
 	{
 		return !(left == right);
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator!=(nullptr_t left, ReferenceCountPtr<T, ThreadSafe> const& right) noexcept
+	template <class T>
+	constexpr bool operator!=(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
 	{
 		return !(left == right);
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator<(ReferenceCountPtr<T, ThreadSafe> const& left, nullptr_t right) noexcept
+	template <class T>
+	constexpr bool operator<(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
 	{
 		return left.Get() < static_cast<T*>(right);
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator<(nullptr_t left, ReferenceCountPtr<T, ThreadSafe> const& right) noexcept
+	template <class T>
+	constexpr bool operator<(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
 	{
 		return static_cast<T*>(left) < right.Get();
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator>=(ReferenceCountPtr<T, ThreadSafe> const& left, nullptr_t right) noexcept
+	template <class T>
+	constexpr bool operator>=(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
 	{
 		return !(left < right);
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator>=(nullptr_t left, ReferenceCountPtr<T, ThreadSafe> const& right) noexcept
+	template <class T>
+	constexpr bool operator>=(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
 	{
 		return !(left < right);
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator>(ReferenceCountPtr<T, ThreadSafe> const& left, nullptr_t right) noexcept
+	template <class T>
+	constexpr bool operator>(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
 	{
 		return right < left;
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator>(nullptr_t left, ReferenceCountPtr<T, ThreadSafe> const& right) noexcept
+	template <class T>
+	constexpr bool operator>(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
 	{
 		return right < left;
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator<=(ReferenceCountPtr<T, ThreadSafe> const& left, nullptr_t right) noexcept
+	template <class T>
+	constexpr bool operator<=(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
 	{
 		return !(right < left);
 	}
 
-	template <class T, bool ThreadSafe>
-	constexpr bool operator<=(nullptr_t left, ReferenceCountPtr<T, ThreadSafe> const& right) noexcept
+	template <class T>
+	constexpr bool operator<=(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
 	{
 		return !(right < left);
 	}

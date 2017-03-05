@@ -33,7 +33,7 @@ int main()
 	constexpr bool noexceptcp = noexcept(CompressedPair<C, int>(C(), 1));
 
 
-	struct NTS : ReferenceCountBase<true>
+	struct NTS : ReferenceCountBase<false>
 	{
 	};
 
@@ -45,12 +45,12 @@ int main()
 
 	{
 		assert(NTS::Count() == 0);
-		ReferenceCountPtr<DNTS, true> pdntsnull;
+		ReferenceCountPtr<DNTS> pdntsnull;
 
-		ReferenceCountPtr<DNTS, true> pdnts(new DNTS, Ownership::Transfer);
+		ReferenceCountPtr<DNTS> pdnts(new DNTS, Ownership::Transfer);
 
-		ReferenceCountPtr<NTS, true> pnts1 = pdnts;
-		ReferenceCountPtr<NTS, true> pnts2(pdnts.Get(), Ownership::Acquire);
+		ReferenceCountPtr<NTS> pnts1 = pdnts;
+		ReferenceCountPtr<NTS> pnts2(pdnts.Get(), Ownership::Acquire);
 
 		assert(pnts1 == pdnts);
 		*pnts1 = *pnts2;
@@ -63,7 +63,7 @@ int main()
 		assert(pnts1.DynamicCastTo<DNTS>()->i == 42);
 
 		assert(NTS::Count() == 1);
-		constexpr bool noexceptrcp = noexcept(ReferenceCountPtr<DNTS, true>());
+		constexpr bool noexceptrcp = noexcept(ReferenceCountPtr<DNTS>());
 		constexpr bool noexceptrcpget = noexcept(pdnts.Get());
 	}
 
