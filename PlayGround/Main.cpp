@@ -66,6 +66,7 @@ int main()
 		constexpr bool noexceptrcp = noexcept(ReferenceCountPtr<DNTS, true>());
 		constexpr bool noexceptrcpget = noexcept(pdnts.Get());
 	}
+
 	assert(NTS::Count() == 0);
 
 	constexpr auto bit0 = BitValue(0);
@@ -75,14 +76,16 @@ int main()
 		B = BitValue(1),
 		C = BitValue(2),
 	};
-
+	static_assert(sizeof(SF) == sizeof(int), "");
 	BitFlag<SF> sflag(SF::A);
 	sflag.SetBits(SF::B);
 	sflag.UnsetBits(SF::A | SF::B);
 	sflag.SetBits(~SF::C & SF::A);
 	sflag.UnsetBits(SF::B);
 	sflag.SetBits(SF::C);
+	assert(sflag.Contains(SF::C));
 	sflag = SF::A | SF::B | SF::C;
+	sflag = SF::A;
 
 	return 0;
 }

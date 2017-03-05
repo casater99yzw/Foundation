@@ -28,6 +28,11 @@ namespace X
 			return UnderlyingType(e);
 		}
 
+		constexpr bool Contains(E bit) const noexcept
+		{
+			return (UnderlyingType(e) & UnderlyingType(bit)) != 0;
+		}
+
 		void SetBits(E bits) noexcept
 		{
 			e = E(UnderlyingType(e) | UnderlyingType(bits));
