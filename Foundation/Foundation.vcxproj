@@ -74,6 +74,7 @@
     <ClInclude Include="BitFlag.h" />
     <ClInclude Include="CompressedPair.h" />
     <ClInclude Include="ReferenceCount.h" />
+    <ClInclude Include="ScopeGuard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

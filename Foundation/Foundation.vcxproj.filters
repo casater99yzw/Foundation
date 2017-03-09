@@ -19,5 +19,8 @@
     <ClInclude Include="BitFlag.h">
       <Filter>Files</Filter>
     </ClInclude>
+    <ClInclude Include="ScopeGuard.h">
+      <Filter>Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
