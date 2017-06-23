@@ -25,5 +25,8 @@
     <ClInclude Include="GeometryFoundation.h">
       <Filter>Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

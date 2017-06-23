@@ -1,5 +1,5 @@
 #pragma once
-#include "BaseType.h"
+#include "BasicType.h"
 #include <type_traits>
 namespace X
 {
@@ -8,7 +8,7 @@ namespace X
 		return 1ull << bit;
 	}
 
-	template <class E, class = std::enable_if_t<std::is_enum<E>::value>>
+	template <class E, class = std::enable_if_t<std::is_enum_v<E>>>
 	class BitFlag
 	{
 		using UnderlyingType = std::underlying_type_t<E>;

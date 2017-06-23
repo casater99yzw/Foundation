@@ -1,14 +1,15 @@
 #pragma once
-#include "BaseType.h"
+#include "BasicType.h"
 #include <atomic>
 
 namespace X
 {
+	// override OnRelease to customize deletion.
 	template <bool ThreadSafe = true>
-	class ReferenceCountBase;
+	struct ReferenceCountBase;
 
 	template <>
-	class ReferenceCountBase<true>
+	struct ReferenceCountBase<true>
 	{
 #ifdef MemoryDebug
 	public:
@@ -71,17 +72,18 @@ namespace X
 			}
 		}
 
-		virtual void OnRelease() noexcept
-		{
-			delete this;
-		}
-
 		virtual ~ReferenceCountBase() noexcept = 0
 		{
 #ifdef MemoryDebug
 			Count() -= 1;
 #endif // MemoryDebug
 		}
+	protected:
+		virtual void OnRelease() noexcept
+		{
+			delete this;
+		}
+
 
 	private:
 		std::atomic<sint32> counter = 1;
@@ -89,7 +91,7 @@ namespace X
 
 
 	template <>
-	class ReferenceCountBase<false>
+	struct ReferenceCountBase<false>
 	{
 #ifdef MemoryDebug
 	public:
@@ -158,31 +160,32 @@ namespace X
 #endif // MemoryDebug
 		}
 
-	private:
+	protected:
 		virtual void OnRelease() noexcept
 		{
 			delete this;
 		}
 
+	private:
 		sint32 counter = 1;
 	};
 
 	namespace Ownership
 	{
-		struct AcquireT
+		constexpr struct AcquireT
 		{
 		} Acquire;
 
-		struct TransferT
+		constexpr struct TransferT
 		{
 		} Transfer;
 	}
 
-	template <class T, class = std::enable_if_t<std::is_base_of<ReferenceCountBase<true>, T>::value || std::is_base_of<ReferenceCountBase<false>, T>::value>>
+	template <class T>
 	class ReferenceCountPtr
 	{
 	public:
-		template <class Y, class = std::enable_if_t<std::is_base_of<ReferenceCountBase<true>, T>::value || std::is_base_of<ReferenceCountBase<false>, T>::value>>
+		template <class Y>
 		friend class ReferenceCountPtr;
 	public:
 		~ReferenceCountPtr() noexcept
@@ -475,4 +478,12 @@ namespace X
 		return !(right < left);
 	}
 
+	template <class T, class... Args>
+	ReferenceCountPtr<T> CreatePtr(Args... args)
+	{
+		return ReferenceCountPtr<T>(new T(std::forward<Args>(args)...), Ownership::Acquire);
+	}
+
+	template <class T>
+	using Ptr = ReferenceCountPtr<T>;
 }
