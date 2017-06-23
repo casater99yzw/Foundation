@@ -13,13 +13,16 @@
     <ClInclude Include="ReferenceCount.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseType.h">
-      <Filter>Files</Filter>
-    </ClInclude>
     <ClInclude Include="BitFlag.h">
       <Filter>Files</Filter>
     </ClInclude>
     <ClInclude Include="ScopeGuard.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicType.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryFoundation.h">
       <Filter>Files</Filter>
     </ClInclude>
   </ItemGroup>
