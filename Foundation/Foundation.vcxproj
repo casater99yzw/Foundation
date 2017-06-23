@@ -76,6 +76,10 @@
     <ClInclude Include="GeometryFoundation.h" />
     <ClInclude Include="ReferenceCount.h" />
     <ClInclude Include="ScopeGuard.h" />
+    <ClInclude Include="Utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Dumy.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

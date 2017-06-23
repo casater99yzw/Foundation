@@ -8,22 +8,28 @@ namespace X
 	struct Size
 	{
 		std::array<T, Dimension> data;
+
+		constexpr Size() noexcept
+		{
+			data.fill(T(0));
+		}
+
 		explicit constexpr Size(std::array<T, Dimension> const& data) noexcept
 			: data(data)
 		{
 		}
-		explicit constexpr Size(T const& x) noexcept
+		constexpr Size(T const& x) noexcept
 		{
 			static_assert(Dimension == 1, "");
 			data[0] = x;
 		}
-		explicit constexpr Size(T const& x, T const& y) noexcept
+		constexpr Size(T const& x, T const& y) noexcept
 		{
 			static_assert(Dimension == 2, "");
 			data[0] = x;
 			data[1] = y;
 		}
-		explicit constexpr Size(T const& x, T const& y, T const& z) noexcept
+		constexpr Size(T const& x, T const& y, T const& z) noexcept
 		{
 			static_assert(Dimension == 3, "");
 			data[0] = x;

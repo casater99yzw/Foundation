@@ -25,5 +25,13 @@
     <ClInclude Include="GeometryFoundation.h">
       <Filter>Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Dumy.cpp">
+      <Filter>Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
