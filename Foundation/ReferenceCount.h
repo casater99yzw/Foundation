@@ -178,7 +178,9 @@ namespace X
 
 		constexpr struct TransferT
 		{
-		} Transfer;
+		}
+		// create ReferenceCountPtr with newed object should using Transfer
+		Transfer;
 	}
 
 	template <class T>
@@ -245,6 +247,12 @@ namespace X
 		ReferenceCountPtr(ReferenceCountPtr<Y>&& other) noexcept
 		{
 			MoveIn(std::move(other));
+		}
+
+		ReferenceCountPtr& operator=(nullptr_t) noexcept
+		{
+			Reset();
+			return *this;
 		}
 
 		ReferenceCountPtr& operator=(ReferenceCountPtr const& other) noexcept
@@ -481,7 +489,7 @@ namespace X
 	template <class T, class... Args>
 	ReferenceCountPtr<T> CreatePtr(Args... args)
 	{
-		return ReferenceCountPtr<T>(new T(std::forward<Args>(args)...), Ownership::Acquire);
+		return ReferenceCountPtr<T>(new T(std::forward<Args>(args)...), Ownership::Transfer);
 	}
 
 	template <class T>
