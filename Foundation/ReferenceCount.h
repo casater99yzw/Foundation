@@ -174,12 +174,15 @@ namespace X
 	{
 		constexpr struct AcquireT
 		{
-		} Acquire;
+		}
+		// Will increase the counter of the object.
+		Acquire;
 
 		constexpr struct TransferT
 		{
 		}
-		// create ReferenceCountPtr with newed object should using Transfer
+		// Will NOT increase he counter of the object.
+		// create ReferenceCountPtr with newed object should using Transfer.
 		Transfer;
 	}
 
