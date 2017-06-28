@@ -1,293 +1,93 @@
 #pragma once
-#include "gmlutility.h"
-#include <cmath>
+#include "Core/BasicType.h"
+#include <type_traits>
 
-namespace gml
+namespace X
 {
-	class degree;
-	class radian;
+	template <class T>
+	class Degree;
+	template <class T>
+	class Radian;
 
-	class degree
+	template <class T>
+	class Degree
 	{
 	public:
-		float value = 0;
+		T value = 0;
 
-		constexpr degree() = default;
+		constexpr Degree() = default;
 
-		constexpr explicit degree(float v) : value(v) { }
+		constexpr explicit Degree(T v) : value(v) {}
 
-		constexpr degree(const radian& r);
+		constexpr Degree(Radian<T> radian);
 
-		friend bool operator==(const degree& l, const degree& r);
+		friend constexpr bool operator==(Degree l, Degree r) { return l.value == r.value; }
+		friend constexpr bool operator!=(Degree l, Degree r) { return l.value != r.value; }
+		friend constexpr bool operator<(Degree l, Degree r) { return l.value < r.value; }
+		friend constexpr bool operator<=(Degree l, Degree r) { return l.value <= r.value; }
+		friend constexpr bool operator>(Degree l, Degree r) { return l.value > r.value; }
+		friend constexpr bool operator>=(Degree l, Degree r) { return l.value >= r.value; }
 
-		friend inline bool operator!=(const degree& l, const degree& r) { return !(l == r); }
+		friend constexpr Degree operator+(Degree l, Degree r) { return Degree(l.value + r.value); }
+		friend constexpr Degree operator-(Degree l, Degree r) { return Degree(l.value - r.value); }
+		friend constexpr Degree operator*(Degree l, T r) { return Degree(l.value * r); }
+		friend constexpr Degree operator*(T l, Degree r) { return Degree(l * r.value); }
 
-		friend constexpr bool operator<(const degree& l, const degree& r);
+		constexpr Degree operator+() const { return *this; }
+		constexpr Degree operator-() const { return Degree(-value); }
 
-		friend constexpr bool operator<=(const degree& l, const degree& r);
-
-		friend constexpr bool operator>(const degree& l, const degree& r);
-
-		friend constexpr bool operator>=(const degree& l, const degree& r);
-
-		friend constexpr degree operator+(const degree& l, const degree& r);
-
-		friend constexpr degree operator-(const degree& l, const degree& r);
-
-		friend constexpr degree operator*(const degree& l, float r);
-
-		friend constexpr degree operator*(float l, const degree& r);
-
-		constexpr const degree& operator+() const;
-
-		constexpr degree operator-() const;
-
-		degree& operator+=(const degree& r);
-
-		degree& operator-=(const degree& r);
-
-		degree& operator*=(float r);
+		Degree& operator+=(Degree other) { value += other.value; return *this; }
+		Degree& operator-=(Degree other) { value -= other.value; return *this; }
+		Degree& operator*=(T other) { value *= other; return *this; }
+		Degree& operator/=(T other) { value /= other; return *this; }
 
 	private:
-		static constexpr float r2d_factor = static_cast<float>(180.0 / PI_d);
+		static constexpr float64 D_PI = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620;
+		static constexpr T RadianToDegree = static_cast<T>(180.0 / D_PI);
 	};
 
-	class radian
+	template <class T>
+	class Radian
 	{
 	public:
-		float value = 0;
+		T value = 0;
 
-		constexpr radian() = default;
+		constexpr Radian() = default;
 
-		constexpr explicit radian(float v) : value(v) { }
+		constexpr explicit Radian(T v) : value(v) {}
 
-		constexpr radian(const degree& d);
+		constexpr Radian(Degree<T> degree);
 
-		friend bool operator==(const radian& l, const radian& r);
+		friend constexpr bool operator==(Radian l, Radian r) { return l.value == r.value; }
+		friend constexpr bool operator!=(Radian l, Radian r) { return l.value != r.value; }
+		friend constexpr bool operator<(Radian l, Radian r) { return l.value < r.value; }
+		friend constexpr bool operator<=(Radian l, Radian r) { return l.value <= r.value; }
+		friend constexpr bool operator>(Radian l, Radian r) { return l.value > r.value; }
+		friend constexpr bool operator>=(Radian l, Radian r) { return l.value >= r.value; }
 
-		friend inline bool operator!=(const radian& l, const radian& r) { return !(l == r); }
+		friend constexpr Radian operator+(Radian l, Radian r) { return Radian(l.value + r.value); }
+		friend constexpr Radian operator-(Radian l, Radian r) { return Radian(l.value - r.value); }
+		friend constexpr Radian operator*(Radian l, T r) { return Radian(l.value * r); }
+		friend constexpr Radian operator*(T l, Radian r) { return Radian(l * r.value); }
 
-		friend constexpr bool operator<(const radian& l, const radian& r);
+		constexpr Radian operator+() const { return *this; }
+		constexpr Radian operator-() const { return Radian(-value); }
 
-		friend constexpr bool operator<=(const radian& l, const radian& r);
-
-		friend constexpr bool operator>(const radian& l, const radian& r);
-
-		friend constexpr bool operator>=(const radian& l, const radian& r);
-
-		friend constexpr radian operator+(const radian& l, const radian& r);
-
-		friend constexpr radian operator-(const radian& l, const radian& r);
-
-		friend constexpr radian operator*(const radian& l, float r);
-
-		friend constexpr radian operator*(float l, const radian& r);
-
-		constexpr const radian& operator+() const;
-
-		constexpr radian operator-() const;
-
-		radian& operator+=(const radian& r);
-
-		radian& operator-=(const radian& r);
-
-		radian& operator*=(float r);
+		Radian& operator+=(Radian  other) { value += other.value; return *this; }
+		Radian& operator-=(Radian  other) { value -= other.value; return *this; }
+		Radian& operator*=(T other) { value *= other; return *this; }
+		Radian& operator/=(T other) { value /= other; return *this; }
 
 	private:
-		static constexpr float d2r_factor = static_cast<float>(PI_d / 180.0);
+		static constexpr float64 D_PI = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620;
+		static constexpr T DegreeToRadian = static_cast<T>(D_PI / 180.0);
 	};
 
-	float cos(const radian& r);
+	template <class T>
+	constexpr Degree<T>::Degree(Radian<T> r) : value(r.value * RadianToDegree) {}
+	template <class T>
+	constexpr Radian<T>::Radian(Degree<T> d) : value(d.value * DegreeToRadian) {}
 
-	float sin(const radian& r);
-}
-
-namespace gml
-{
-	constexpr degree::degree(const radian& r) : value(r.value * r2d_factor) { }
-
-	inline bool operator==(const degree& l, const degree& r)
-	{
-		if (&l != &r)
-		{
-			return fequal(l.value, r.value);
-		}
-		else
-		{
-			return true;
-		}
-	}
-
-	constexpr bool operator<(const degree& l, const degree& r)
-	{
-		return l.value < r.value;
-	}
-
-	constexpr bool operator<=(const degree& l, const degree& r)
-	{
-		return l.value <= r.value;
-	}
-
-	constexpr bool operator>(const degree& l, const degree& r)
-	{
-		return l.value > r.value;
-	}
-
-	constexpr bool operator>=(const degree& l, const degree& r)
-	{
-		return l.value >= r.value;
-	}
-
-	constexpr degree operator+(const degree& l, const degree& r)
-	{
-		return degree(l.value + r.value);
-	}
-
-	constexpr degree operator-(const degree& l, const degree& r)
-	{
-		return degree(l.value - r.value);
-	}
-
-	constexpr degree operator*(const degree& l, float r)
-	{
-		return degree(l.value * r);
-	}
-
-	constexpr degree operator*(float l, const degree& r)
-	{
-		return degree(l * r.value);
-	}
-
-	constexpr const degree& degree::operator+() const
-	{
-		return *this;
-	}
-
-	constexpr degree degree::operator-() const
-	{
-		return degree(-value);
-	}
-
-	inline degree& degree::operator+=(const degree& r)
-	{
-		value += r.value;
-		return *this;
-	}
-
-	inline degree& degree::operator-=(const degree& r)
-	{
-		value -= r.value;
-		return *this;
-	}
-
-	inline degree& degree::operator*=(float r)
-	{
-		value *= r;
-		return *this;
-	}
-
-	constexpr radian::radian(const degree& d) : value(d.value * d2r_factor) { }
-
-	inline bool operator==(const radian& l, const radian& r)
-	{
-		if (&l != &r)
-		{
-			return fequal(l.value, r.value);
-		}
-		else
-		{
-			return true;
-		}
-	}
-
-	constexpr bool operator<(const radian& l, const radian& r)
-	{
-		return l.value < r.value;
-	}
-
-	constexpr bool operator<=(const radian& l, const radian& r)
-	{
-		return l.value <= r.value;
-	}
-
-	constexpr bool operator>(const radian& l, const radian& r)
-	{
-		return l.value > r.value;
-	}
-
-	constexpr bool operator>=(const radian& l, const radian& r)
-	{
-		return l.value >= r.value;
-	}
-
-	constexpr radian operator+(const radian& l, const radian& r)
-	{
-		return radian(l.value + r.value);
-	}
-
-	constexpr radian operator-(const radian& l, const radian& r)
-	{
-		return radian(l.value - r.value);
-	}
-
-	constexpr radian operator*(const radian& l, float r)
-	{
-		return radian(l.value * r);
-	}
-
-	constexpr radian operator*(float l, const radian& r)
-	{
-		return radian(l * r.value);
-	}
-
-	constexpr const radian& radian::operator+() const
-	{
-		return *this;
-	}
-
-	constexpr radian radian::operator-() const
-	{
-		return radian(-value);
-	}
-
-	inline radian& radian::operator+=(const radian& r)
-	{
-		value += r.value;
-		return *this;
-	}
-
-	inline radian& radian::operator-=(const radian& r)
-	{
-		value -= r.value;
-		return *this;
-	}
-
-	inline radian& radian::operator*=(float r)
-	{
-		value *= r;
-		return *this;
-	}
-
-	inline float cos(const radian& r)
-	{
-		return cosf(r.value);
-	}
-
-	inline float sin(const radian& r)
-	{
-		return sinf(r.value);
-	}
-
-	inline radian limited_rotation(const radian& r)
-	{
-		if (r.value < 0)
-		{
-			float vtrunc = -trunc(r.value / PI2) + 1.0f;
-			return radian(r.value + vtrunc * PI2);
-		}
-		else
-		{
-			return radian(fmod(r.value, PI2));
-		}
-	}
+	using RadianF32 = Radian<float32>;
+	using DegreeF32 = Degree<float32>;
 }

@@ -60,4 +60,9 @@
       <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Math\Math.inl">
+      <Filter>Math</Filter>
+    </None>
+  </ItemGroup>
 </Project>

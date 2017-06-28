@@ -1,83 +1,83 @@
 #pragma once
 
-#include "Base/Math.hpp"
+#include "Base/Math.h"
 
-namespace XREX
+namespace X
 {
 
-	class XREX_API Color
+	class Color
 	{
 	public:
 		Color()
 		{
 		}
-		Color(float r, float g, float b, float a)
+		Color(float32 r, float32 g, float32 b, float32 a)
 			: value_(r, g, b, a)
 		{
 		}
-		Color(Color const& right)
-			: value_(right.value_)
+		Color(Color const& r)
+			: value_(r.value_)
 		{
 		}
 		~Color()
 		{
 		}
 
-		float R() const
+		float32 R() const
 		{
 			return value_.X();
 		}
-		float G() const
+		float32 G() const
 		{
 			return value_.Y();
 		}
-		float B() const
+		float32 B() const
 		{
 			return value_.Z();
 		}
-		float A() const
+		float32 A() const
 		{
 			return value_.W();
 		}
 
-		friend Color operator +(Color const& left, Color const& right)
+		friend Color operator +(Color const& l, Color const& r)
 		{
 			Color temp;
-			temp.value_ = left.value_ + right.value_;
+			temp.value_ = l.value_ + r.value_;
 			return temp;
 		}
 
-		friend Color operator -(Color const& left, Color const& right)
+		friend Color operator -(Color const& l, Color const& r)
 		{
 			Color temp;
-			temp.value_ = left.value_ - right.value_;
+			temp.value_ = l.value_ - r.value_;
 			return temp;
 		}
 
-		friend Color operator *(Color const& left, Color const& right)
+		friend Color operator *(Color const& l, Color const& r)
 		{
 			Color temp;
-			temp.value_ = left.value_ * right.value_;
+			temp.value_ = l.value_ * r.value_;
 			return temp;
 		}
 
-		friend Color operator *(Color const& left, float right)
+		friend Color operator *(Color const& l, float32 r)
 		{
 			Color temp;
-			temp.value_ = left.value_ * right;
+			temp.value_ = l.value_ * r;
 			return temp;
 		}
-		friend Color operator *(float const& left, Color const& right)
+		friend Color operator *(float32 const& l, Color const& r)
 		{
 			Color temp;
-			temp.value_ = left * right.value_;
+			temp.value_ = l * r.value_;
 			return temp;
 		}
 
-		friend Color operator /(Color const& left, float const& right)
+		friend Color operator /(Color const& l, float32 const& r)
 		{
 			Color temp;
-			temp.value_ = left.value_ / right;
+			temp.value_ = l.value_ / r;
 			return temp;
 		}
 
@@ -92,23 +92,23 @@ namespace XREX
 			return temp;
 		}
 
-		friend bool operator ==(Color const& left, Color const& right)
+		friend bool operator ==(Color const& l, Color const& r)
 		{
-			return left.value_ == right.value_;
+			return l.value_ == r.value_;
 		}
 
-		friend bool operator !=(Color const& left, Color const& right)
+		friend bool operator !=(Color const& l, Color const& r)
 		{
-			return left.value_ != right.value_;
+			return l.value_ != r.value_;
 		}
 
-		float const* GetArray() const
+		float32 const* GetArray() const
 		{
 			return value_.GetArray();
 		}
 
 	private:
-		floatV4 value_;
+		f32V4 value_;
 	};
 
 }

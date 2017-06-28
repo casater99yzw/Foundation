@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Base/Math.hpp"
-#include "Vector.hpp"
-#include "MathHelper.hpp"
+#include "Math/Math.h"
+#include "Vector.h"
+#include "MathHelper.h"
 
-namespace XREX
+namespace X
 {
 
 	/*
@@ -19,13 +19,6 @@ namespace XREX
 	public:
 		static uint32 const Dimension = 4;
 
-		typedef T ValueType;
-
-		typedef ValueType* Pointer;
-		typedef ValueType const* ConstPointer;
-
-		typedef ValueType& Reference;
-		typedef ValueType const& ConstReference;
 
 	public:
 		/*
@@ -41,17 +34,17 @@ namespace XREX
 		QuaternionT()
 		{
 		}
-		QuaternionT(QuaternionT const& right)
-			: values_(right.values_)
+		QuaternionT(QuaternionT const& r)
+			: values_(r.values_)
 		{
 		}
 		template <typename U>
-		explicit QuaternionT(QuaternionT<U> const& right)
-			: values_(right.values_)
+		explicit QuaternionT(QuaternionT<U> const& r)
+			: values_(r.values_)
 		{
 		}
-		explicit QuaternionT(VectorT<T, 4> const& right)
-			: values_(right)
+		explicit QuaternionT(VectorT<T, 4> const& r)
+			: values_(r)
 		{
 		}
 		QuaternionT(VectorT<T, 3> const& axis, T const& w)
@@ -63,18 +56,18 @@ namespace XREX
 		{
 		}
 
-		QuaternionT& operator =(QuaternionT const& right)
+		QuaternionT& operator =(QuaternionT const& r)
 		{
-			if (this != &right)
+			if (this != &r)
 			{
-				values_ = right.values_;
+				values_ = r.values_;
 			}
 			return *this;
 		}
 		template <typename U>
-		QuaternionT& operator =(QuaternionT<U> const& right)
+		QuaternionT& operator =(QuaternionT<U> const& r)
 		{
-			values_ = right.values_;
+			values_ = r.values_;
 			return *this;
 		}
 
@@ -115,39 +108,39 @@ namespace XREX
 			return *reinterpret_cast<VectorT<T, 3> const*>(&values_);
 		}
 
-		friend QuaternionT operator +(QuaternionT const& left, QuaternionT const& right)
+		friend QuaternionT operator +(QuaternionT const& l, QuaternionT const& r)
 		{
-			return QuaternionT(left.values_ + right.values_);
+			return QuaternionT(l.values_ + r.values_);
 		}
 
-		friend QuaternionT operator -(QuaternionT const& left, QuaternionT const& right)
+		friend QuaternionT operator -(QuaternionT const& l, QuaternionT const& r)
 		{
-			return QuaternionT(left.values_ - right.values_);
+			return QuaternionT(l.values_ - r.values_);
 
 		}
 
-		friend QuaternionT operator *(QuaternionT const& left, QuaternionT const& right)
+		friend QuaternionT operator *(QuaternionT const& l, QuaternionT const& r)
 		{
 			// see Mathematics for 3D Game Programming and Computer Graphics, 3rd. 4.6.1 Quaternions Mathematics
 			return QuaternionT(
-				left.W() * right.X() + left.X() * right.W() + left.Y() * right.Z() - left.Z() * right.Y(),
-				left.W() * right.Y() + left.Y() * right.W() + left.Z() * right.X() - left.X() * right.Z(),
-				left.W() * right.Z() + left.Z() * right.W() + left.X() * right.Y() - left.Y() * right.X(),
-				left.W() * right.W() - left.X() * right.X() - left.Y() * right.Y() - left.Z() * right.Z());
+				l.W() * r.X() + l.X() * r.W() + l.Y() * r.Z() - l.Z() * r.Y(),
+				l.W() * r.Y() + l.Y() * r.W() + l.Z() * r.X() - l.X() * r.Z(),
+				l.W() * r.Z() + l.Z() * r.W() + l.X() * r.Y() - l.Y() * r.X(),
+				l.W() * r.W() - l.X() * r.X() - l.Y() * r.Y() - l.Z() * r.Z());
 		}
 
-		friend QuaternionT operator *(QuaternionT const& left, T const& right)
+		friend QuaternionT operator *(QuaternionT const& l, T const& r)
 		{
-			return QuaternionT(left.values_ * right);
+			return QuaternionT(l.values_ * r);
 		}
-		friend QuaternionT operator *(T const& left, QuaternionT const& right)
+		friend QuaternionT operator *(T const& l, QuaternionT const& r)
 		{
-			return QuaternionT(left * right.values_);
+			return QuaternionT(l * r.values_);
 		}
 
-		friend QuaternionT operator /(QuaternionT const& left, T const& right)
+		friend QuaternionT operator /(QuaternionT const& l, T const& r)
 		{
-			return QuaternionT(left.values_ / right);
+			return QuaternionT(l.values_ / r);
 		}
 
 		QuaternionT const& operator +() const
@@ -159,14 +152,14 @@ namespace XREX
 			return QuaternionT(-values_);
 		}
 
-		friend bool operator ==(QuaternionT const& left, QuaternionT const& right)
+		friend bool operator ==(QuaternionT const& l, QuaternionT const& r)
 		{
-			return left.values_ == right.values_;
+			return l.values_ == r.values_;
 		}
 
-		friend bool	operator !=(QuaternionT const& left, QuaternionT const& right)
+		friend bool	operator !=(QuaternionT const& l, QuaternionT const& r)
 		{
-			return left.values_ != right.values_;
+			return l.values_ != r.values_;
 		}
 
 		QuaternionT Normalize() const
@@ -205,6 +198,6 @@ namespace XREX
 	template <typename T>
 	QuaternionT<T> const QuaternionT<T>::Identity = QuaternionT(VectorT<T, 3>(T(0)), T(1));
 
-	typedef QuaternionT<float> floatQ;
+	typedef QuaternionT<float32> floatQ;
 
 }

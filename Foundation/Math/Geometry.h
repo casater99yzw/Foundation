@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Base/BasicType.hpp"
-#include "Vector.hpp"
+#include "Core/BasicType.h"
+#include "Math/Vector.h"
 
 // TODO
-namespace XREX
+namespace X
 {
 
 	template <typename T>
@@ -29,31 +29,31 @@ namespace XREX
 			auto& zero = VectorT<T, 3>::Zero;
 			assert(direction != zero);
 		}
-		RayT(RayT const& right)
-			: origin_(right.origin_), direction_(right.direction_)
+		RayT(RayT const& r)
+			: origin_(r.origin_), direction_(r.direction_)
 		{
 		}
 		template <typename U>
-		RayT(RayT<U> const& right)
-			: origin_(right.origin_), direction_(right.direction_)
+		RayT(RayT<U> const& r)
+			: origin_(r.origin_), direction_(r.direction_)
 		{
 		}
 
-		RayT& operator =(RayT const& right)
+		RayT& operator =(RayT const& r)
 		{
-			if (this != &right)
+			if (this != &r)
 			{
-				origin_ = right.origin_;
-				direction_ = right.direction_;
+				origin_ = r.origin_;
+				direction_ = r.direction_;
 			}
 		}
 		template <typename U>
-		RayT& operator =(RayT<U> const& right)
+		RayT& operator =(RayT<U> const& r)
 		{
-			if (this != &right)
+			if (this != &r)
 			{
-				origin_ = right.origin_;
-				direction_ = right.direction_;
+				origin_ = r.origin_;
+				direction_ = r.direction_;
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace XREX
 		VectorT<T, 3> origin_;
 		VectorT<T, 3> direction_;
 	};
-	typedef RayT<float> Ray;
+	typedef RayT<float32> Ray;
 
 
 	template <typename T>
@@ -110,31 +110,31 @@ namespace XREX
 		{
 		}
 
-		PlaneT(PlaneT const& right)
-			: normal_(right.normal_), distance_(right.distance_)
+		PlaneT(PlaneT const& r)
+			: normal_(r.normal_), distance_(r.distance_)
 		{
 		}
 		template <typename U>
-		PlaneT(PlaneT<U> const& right)
-			: normal_(right.normal_), distance_(right.distance_)
+		PlaneT(PlaneT<U> const& r)
+			: normal_(r.normal_), distance_(r.distance_)
 		{
 		}
 
-		PlaneT& operator =(PlaneT const& right)
+		PlaneT& operator =(PlaneT const& r)
 		{
-			if (this != &right)
+			if (this != &r)
 			{
-				normal_ = right.normal_;
-				distance_ = right.distance_;
+				normal_ = r.normal_;
+				distance_ = r.distance_;
 			}
 		}
 		template <typename U>
-		PlaneT& operator =(PlaneT<U> const& right)
+		PlaneT& operator =(PlaneT<U> const& r)
 		{
-			if (this != &right)
+			if (this != &r)
 			{
-				normal_ = right.normal_;
-				distance_ = right.distance_;
+				normal_ = r.normal_;
+				distance_ = r.distance_;
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace XREX
 		VectorT<T, 3> normal_;
 		T distance_;
 	};
-	typedef PlaneT<float> Plane;
+	typedef PlaneT<float32> Plane;
 
 	template <typename T>
 	class FrustumT

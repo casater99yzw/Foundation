@@ -380,113 +380,113 @@ namespace X
 
 
 	template <class T1, class T2>
-	constexpr bool operator==(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
+	constexpr bool operator==(ReferenceCountPtr<T1> const& l, ReferenceCountPtr<T2> const& r) noexcept
 	{
 		using Common = std::common_type_t<T1*, T2*>;
-		return static_cast<Common>(left.Get()) == static_cast<Common>(right.Get());
+		return static_cast<Common>(l.Get()) == static_cast<Common>(r.Get());
 	}
 
 	template <class T1, class T2>
-	constexpr bool operator!=(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
+	constexpr bool operator!=(ReferenceCountPtr<T1> const& l, ReferenceCountPtr<T2> const& r) noexcept
 	{
-		return !(left == right);
+		return !(l == r);
 	}
 
 	template <class T1, class T2>
-	constexpr bool operator<(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
+	constexpr bool operator<(ReferenceCountPtr<T1> const& l, ReferenceCountPtr<T2> const& r) noexcept
 	{
 		using Common = std::common_type_t<T1*, T2*>;
-		return static_cast<Common>(left.Get()) < static_cast<Common>(right.Get());
+		return static_cast<Common>(l.Get()) < static_cast<Common>(r.Get());
 	}
 
 	template <class T1, class T2>
-	constexpr bool operator>=(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
+	constexpr bool operator>=(ReferenceCountPtr<T1> const& l, ReferenceCountPtr<T2> const& r) noexcept
 	{
-		return !(left < right);
+		return !(l < r);
 	}
 
 	template <class T1, class T2>
-	constexpr bool operator>(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
+	constexpr bool operator>(ReferenceCountPtr<T1> const& l, ReferenceCountPtr<T2> const& r) noexcept
 	{
-		return right < left;
+		return r < l;
 	}
 
 	template <class T1, class T2>
-	constexpr bool operator<=(ReferenceCountPtr<T1> const& left, ReferenceCountPtr<T2> const& right) noexcept
+	constexpr bool operator<=(ReferenceCountPtr<T1> const& l, ReferenceCountPtr<T2> const& r) noexcept
 	{
-		return !(right < left);
+		return !(r < l);
 	}
 
 	template <class T>
-	constexpr bool operator==(ReferenceCountPtr<T> const& left, nullptr_t) noexcept
+	constexpr bool operator==(ReferenceCountPtr<T> const& l, nullptr_t) noexcept
 	{
-		return !left;
+		return !l;
 	}
 
 	template <class T>
-	constexpr bool operator==(nullptr_t, ReferenceCountPtr<T> const& right) noexcept
+	constexpr bool operator==(nullptr_t, ReferenceCountPtr<T> const& r) noexcept
 	{
-		return !right;
+		return !r;
 	}
 
 	template <class T>
-	constexpr bool operator!=(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
+	constexpr bool operator!=(ReferenceCountPtr<T> const& l, nullptr_t r) noexcept
 	{
-		return !(left == right);
+		return !(l == r);
 	}
 
 	template <class T>
-	constexpr bool operator!=(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
+	constexpr bool operator!=(nullptr_t l, ReferenceCountPtr<T> const& r) noexcept
 	{
-		return !(left == right);
+		return !(l == r);
 	}
 
 	template <class T>
-	constexpr bool operator<(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
+	constexpr bool operator<(ReferenceCountPtr<T> const& l, nullptr_t r) noexcept
 	{
-		return left.Get() < static_cast<T*>(right);
+		return l.Get() < static_cast<T*>(r);
 	}
 
 	template <class T>
-	constexpr bool operator<(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
+	constexpr bool operator<(nullptr_t l, ReferenceCountPtr<T> const& r) noexcept
 	{
-		return static_cast<T*>(left) < right.Get();
+		return static_cast<T*>(l) < r.Get();
 	}
 
 	template <class T>
-	constexpr bool operator>=(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
+	constexpr bool operator>=(ReferenceCountPtr<T> const& l, nullptr_t r) noexcept
 	{
-		return !(left < right);
+		return !(l < r);
 	}
 
 	template <class T>
-	constexpr bool operator>=(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
+	constexpr bool operator>=(nullptr_t l, ReferenceCountPtr<T> const& r) noexcept
 	{
-		return !(left < right);
+		return !(l < r);
 	}
 
 	template <class T>
-	constexpr bool operator>(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
+	constexpr bool operator>(ReferenceCountPtr<T> const& l, nullptr_t r) noexcept
 	{
-		return right < left;
+		return r < l;
 	}
 
 	template <class T>
-	constexpr bool operator>(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
+	constexpr bool operator>(nullptr_t l, ReferenceCountPtr<T> const& r) noexcept
 	{
-		return right < left;
+		return r < l;
 	}
 
 	template <class T>
-	constexpr bool operator<=(ReferenceCountPtr<T> const& left, nullptr_t right) noexcept
+	constexpr bool operator<=(ReferenceCountPtr<T> const& l, nullptr_t r) noexcept
 	{
-		return !(right < left);
+		return !(r < l);
 	}
 
 	template <class T>
-	constexpr bool operator<=(nullptr_t left, ReferenceCountPtr<T> const& right) noexcept
+	constexpr bool operator<=(nullptr_t l, ReferenceCountPtr<T> const& r) noexcept
 	{
-		return !(right < left);
+		return !(r < l);
 	}
 
 	template <class T, class... Args>

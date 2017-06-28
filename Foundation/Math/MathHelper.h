@@ -3,28 +3,28 @@
 */
 #pragma once
 
-namespace XREX
+namespace X
 {
 	namespace MathHelper
 	{
 		template <typename T, uint32 N> // is a class due to template function cannot be partially specialized.
 		struct TransformHelper
 		{
-			static void DoTransform(T out[N], T const m[16], T const v[N], T lastComponent);
-			static void DoTransformDirection(T out[N], T const m[16], T const v[N]);
+			constexpr static void DoTransform(T out[N], T const m[16], T const v[N], T lastComponent);
+			constexpr static void DoTransformDirection(T out[N], T const m[16], T const v[N]);
 		};
 
 		template <typename T>
 		struct TransformHelper<T, 4>
 		{
-			static void DoTransform(T out[4], T const m[16], T const v[4], T lastComponent)
+			constexpr static void DoTransform(T out[4], T const m[16], T const v[4], T lastComponent)
 			{
 				out[0] = m[0] * v[0] + m[4] * v[1] + m[8] * v[2] + m[12] * v[3];
 				out[1] = m[1] * v[0] + m[5] * v[1] + m[9] * v[2] + m[13] * v[3];
 				out[2] = m[2] * v[0] + m[6] * v[1] + m[10] * v[2] + m[14] * v[3];
 				out[3] = m[3] * v[0] + m[7] * v[1] + m[11] * v[2] + m[15] * v[3];
 			}
-			static void DoTransformDirection(T out[4], T const m[16], T const v[4])
+			constexpr static void DoTransformDirection(T out[4], T const m[16], T const v[4])
 			{
 				out[0] = m[0] * v[0] + m[4] * v[1] + m[8] * v[2];
 				out[1] = m[1] * v[0] + m[5] * v[1] + m[9] * v[2];
@@ -35,14 +35,14 @@ namespace XREX
 		template <typename T>
 		struct TransformHelper<T, 3>
 		{
-			static void DoTransform(T out[3], T const m[16], T const v[3], T lastComponent)
+			constexpr static void DoTransform(T out[3], T const m[16], T const v[3], T lastComponent)
 			{
 				T inverseW = T(1) / (m[3] * v[0] + m[7] * v[1] + m[11] * v[2] + m[15] * lastComponent);
 				out[0] = (m[0] * v[0] + m[4] * v[1] + m[8] * v[2] + m[12] * lastComponent) * inverseW;
 				out[1] = (m[1] * v[0] + m[5] * v[1] + m[9] * v[2] + m[13] * lastComponent) * inverseW;
 				out[2] = (m[2] * v[0] + m[6] * v[1] + m[10] * v[2] + m[14] * lastComponent) * inverseW;
 			}
-			static void DoTransformDirection(T out[3], T const m[16], T const v[3])
+			constexpr static void DoTransformDirection(T out[3], T const m[16], T const v[3])
 			{
 				out[0] = m[0] * v[0] + m[4] * v[1] + m[8] * v[2];
 				out[1] = m[1] * v[0] + m[5] * v[1] + m[9] * v[2];
@@ -56,81 +56,81 @@ namespace XREX
 		{
 			static_assert(N <= 4, "Vector larger than 4 are not support.");
 			template <typename U>
-			static void DoCopy(T out[N], U const right[N])
+			constexpr static void DoCopy(T out[N], U const r[N])
 			{
-				out[0] = static_cast<T>(right[0]);
-				VectorHelper<T, N - 1>::DoCopy(out + 1, right + 1);
+				out[0] = static_cast<T>(r[0]);
+				VectorHelper<T, N - 1>::DoCopy(out + 1, r + 1);
 			}
 
-			static void DoAssign(T out[N], T const& right)
+			constexpr static void DoAssign(T out[N], T const& r)
 			{
-				out[0] = right;
-				VectorHelper<T, N - 1>::DoAssign(out + 1, right);
+				out[0] = r;
+				VectorHelper<T, N - 1>::DoAssign(out + 1, r);
 			}
 
-			static void DoAdd(T out[N], T const left[N], T const right[N])
+			constexpr static void DoAdd(T out[N], T const l[N], T const r[N])
 			{
-				out[0] = left[0] + right[0];
-				VectorHelper<T, N - 1>::DoAdd(out + 1, left + 1, right + 1);
+				out[0] = l[0] + r[0];
+				VectorHelper<T, N - 1>::DoAdd(out + 1, l + 1, r + 1);
 			}
 
-			static void DoAdd(T out[N], T const left[N], T const& right)
+			constexpr static void DoAdd(T out[N], T const l[N], T const& r)
 			{
-				out[0] = left[0] + right;
-				VectorHelper<T, N - 1>::DoAdd(out + 1, left + 1, right);
+				out[0] = l[0] + r;
+				VectorHelper<T, N - 1>::DoAdd(out + 1, l + 1, r);
 			}
 
-			static void DoSubtract(T out[N], T const left[N], T const right[N])
+			constexpr static void DoSubtract(T out[N], T const l[N], T const r[N])
 			{
-				out[0] = left[0] - right[0];
-				VectorHelper<T, N - 1>::DoSubtract(out + 1, left + 1, right + 1);
+				out[0] = l[0] - r[0];
+				VectorHelper<T, N - 1>::DoSubtract(out + 1, l + 1, r + 1);
 			}
 
-			static void DoSubtract(T out[N], T const left[N], T const& right)
+			constexpr static void DoSubtract(T out[N], T const l[N], T const& r)
 			{
-				out[0] = left[0] - right;
-				VectorHelper<T, N - 1>::DoSubtract(out + 1, left + 1, right);
+				out[0] = l[0] - r;
+				VectorHelper<T, N - 1>::DoSubtract(out + 1, l + 1, r);
 			}
 
-			static void DoMultiply(T out[N], T const left[N], T const right[N])
+			constexpr static void DoMultiply(T out[N], T const l[N], T const r[N])
 			{
-				out[0] = left[0] * right[0];
-				VectorHelper<T, N - 1>::DoMultiply(out + 1, left + 1, right + 1);
+				out[0] = l[0] * r[0];
+				VectorHelper<T, N - 1>::DoMultiply(out + 1, l + 1, r + 1);
 			}
 
-			static void DoScale(T out[N], T const left[N], T const& right)
+			constexpr static void DoScale(T out[N], T const l[N], T const& r)
 			{
-				out[0] = left[0] * right;
-				VectorHelper<T, N - 1>::DoScale(out + 1, left + 1, right);
+				out[0] = l[0] * r;
+				VectorHelper<T, N - 1>::DoScale(out + 1, l + 1, r);
 			}
 
-			static void DoDivide(T out[N], T const left[N], T const right[N])
+			constexpr static void DoDivide(T out[N], T const l[N], T const r[N])
 			{
-				out[0] = left[0] / right[0];
-				VectorHelper<T, N - 1>::DoDivide(out + 1, left + 1, right + 1);
+				out[0] = l[0] / r[0];
+				VectorHelper<T, N - 1>::DoDivide(out + 1, l + 1, r + 1);
 			}
 
-			static void DoNegate(T out[N], T const right[N])
+			constexpr static void DoNegate(T out[N], T const r[N])
 			{
-				out[0] = -right[0];
-				VectorHelper<T, N - 1>::DoNegate(out + 1, right + 1);
+				out[0] = -r[0];
+				VectorHelper<T, N - 1>::DoNegate(out + 1, r + 1);
 			}
 
-			static bool DoEqual(T const left[N], T const right[N])
+			constexpr static bool DoEqual(T const l[N], T const r[N])
 			{
-				return VectorHelper<T, 1>::DoEqual(left, right) && VectorHelper<T, N - 1>::DoEqual(left + 1, right + 1);
+				return VectorHelper<T, 1>::DoEqual(l, r) && VectorHelper<T, N - 1>::DoEqual(l + 1, r + 1);
 			}
 
-			static void DoSwap(T left[N], T right[N])
+			constexpr static void DoSwap(T l[N], T r[N])
 			{
-				std::swap(left[0], right[0]);
-				VectorHelper<T, N - 1>::DoSwap(left + 1, right + 1);
+				std::swap(l[0], r[0]);
+				VectorHelper<T, N - 1>::DoSwap(l + 1, r + 1);
 			}
 
 
-			static T DoDot(T const left[1], T const right[1])
+			constexpr static T DoDot(T const l[1], T const r[1])
 			{
-				return left[0] * right[0] + VectorHelper<T, N - 1>::DoDot(left + 1, right + 1);
+				return l[0] * r[0] + VectorHelper<T, N - 1>::DoDot(l + 1, r + 1);
 			}
 		};
 
@@ -138,91 +138,91 @@ namespace XREX
 		struct VectorHelper<T, 1>
 		{
 			template <typename U>
-			static void DoCopy(T out[1], U const right[1])
+			constexpr static void DoCopy(T out[1], U const r[1])
 			{
-				out[0] = static_cast<T>(right[0]);
+				out[0] = static_cast<T>(r[0]);
 			}
 
-			static void DoAssign(T out[1], T const& right)
+			constexpr static void DoAssign(T out[1], T const& r)
 			{
-				out[0] = right;
+				out[0] = r;
 			}
 
-			static void DoAdd(T out[1], T const left[1], T const right[1])
+			constexpr static void DoAdd(T out[1], T const l[1], T const r[1])
 			{
-				out[0] = left[0] + right[0];
+				out[0] = l[0] + r[0];
 			}
 
-			static void DoAdd(T out[1], T const left[1], T const right)
+			constexpr static void DoAdd(T out[1], T const l[1], T const r)
 			{
-				out[0] = left[0] + right;
+				out[0] = l[0] + r;
 			}
 
-			static void DoSubtract(T out[1], T const left[1], T const right[1])
+			constexpr static void DoSubtract(T out[1], T const l[1], T const r[1])
 			{
-				out[0] = left[0] - right[0];
+				out[0] = l[0] - r[0];
 			}
 
-			static void DoSubtract(T out[1], T const left[1], T const& right)
+			constexpr static void DoSubtract(T out[1], T const l[1], T const& r)
 			{
-				out[0] = left[0] - right;
+				out[0] = l[0] - r;
 			}
 
-			static void DoMultiply(T out[1], T const left[1], T const right[1])
+			constexpr static void DoMultiply(T out[1], T const l[1], T const r[1])
 			{
-				out[0] = left[0] * right[0];
+				out[0] = l[0] * r[0];
 			}
 
-			static void DoScale(T out[1], T const left[1], T const& right)
+			constexpr static void DoScale(T out[1], T const l[1], T const& r)
 			{
-				out[0] = left[0] * right;
+				out[0] = l[0] * r;
 			}
 
-			static void DoDivide(T out[1], T const left[1], T const right[1])
+			constexpr static void DoDivide(T out[1], T const l[1], T const r[1])
 			{
-				out[0] = left[0] / right[0];
+				out[0] = l[0] / r[0];
 			}
 
-			static void DoNegate(T out[1], T const right[1])
+			constexpr static void DoNegate(T out[1], T const r[1])
 			{
-				out[0] = -right[0];
+				out[0] = -r[0];
 			}
 
-			static bool DoEqual(T const left[1], T const right[1])
+			constexpr static bool DoEqual(T const l[1], T const r[1])
 			{
-				return left[0] == right[0];
+				return l[0] == r[0];
 			}
 
-			static T DoDot(T const left[1], T const right[1])
+			constexpr static T DoDot(T const l[1], T const r[1])
 			{
-				return left[0] * right[0];
+				return l[0] * r[0];
 			}
 		};
 
 		template <typename T>
 		struct MatrixHepler
 		{
-			static void DoMultiply(T out[16], T const left[16], T const right[16])
+			constexpr static void DoMultiply(T out[16], T const l[16], T const r[16])
 			{
-				out[0] = right[0] * left[0] + right[1] * left[4] + right[2] * left[8] + right[3] * left[12];
-				out[1] = right[0] * left[1] + right[1] * left[5] + right[2] * left[9] + right[3] * left[13];
-				out[2] = right[0] * left[2] + right[1] * left[6] + right[2] * left[10] + right[3] * left[14];
-				out[3] = right[0] * left[3] + right[1] * left[7] + right[2] * left[11] + right[3] * left[15];
-				out[4] = right[4] * left[0] + right[5] * left[4] + right[6] * left[8] + right[7] * left[12];
-				out[5] = right[4] * left[1] + right[5] * left[5] + right[6] * left[9] + right[7] * left[13];
-				out[6] = right[4] * left[2] + right[5] * left[6] + right[6] * left[10] + right[7] * left[14];
-				out[7] = right[4] * left[3] + right[5] * left[7] + right[6] * left[11] + right[7] * left[15];
-				out[8] = right[8] * left[0] + right[9] * left[4] + right[10] * left[8] + right[11] * left[12];
-				out[9] = right[8] * left[1] + right[9] * left[5] + right[10] * left[9] + right[11] * left[13];
-				out[10] = right[8] * left[2] + right[9] * left[6] + right[10] * left[10] + right[11] * left[14];
-				out[11] = right[8] * left[3] + right[9] * left[7] + right[10] * left[11] + right[11] * left[15];
-				out[12] = right[12] * left[0] + right[13] * left[4] + right[14] * left[8] + right[15] * left[12];
-				out[13] = right[12] * left[1] + right[13] * left[5] + right[14] * left[9] + right[15] * left[13];
-				out[14] = right[12] * left[2] + right[13] * left[6] + right[14] * left[10] + right[15] * left[14];
-				out[15] = right[12] * left[3] + right[13] * left[7] + right[14] * left[11] + right[15] * left[15];
+				out[0] = r[0] * l[0] + r[1] * l[4] + r[2] * l[8] + r[3] * l[12];
+				out[1] = r[0] * l[1] + r[1] * l[5] + r[2] * l[9] + r[3] * l[13];
+				out[2] = r[0] * l[2] + r[1] * l[6] + r[2] * l[10] + r[3] * l[14];
+				out[3] = r[0] * l[3] + r[1] * l[7] + r[2] * l[11] + r[3] * l[15];
+				out[4] = r[4] * l[0] + r[5] * l[4] + r[6] * l[8] + r[7] * l[12];
+				out[5] = r[4] * l[1] + r[5] * l[5] + r[6] * l[9] + r[7] * l[13];
+				out[6] = r[4] * l[2] + r[5] * l[6] + r[6] * l[10] + r[7] * l[14];
+				out[7] = r[4] * l[3] + r[5] * l[7] + r[6] * l[11] + r[7] * l[15];
+				out[8] = r[8] * l[0] + r[9] * l[4] + r[10] * l[8] + r[11] * l[12];
+				out[9] = r[8] * l[1] + r[9] * l[5] + r[10] * l[9] + r[11] * l[13];
+				out[10] = r[8] * l[2] + r[9] * l[6] + r[10] * l[10] + r[11] * l[14];
+				out[11] = r[8] * l[3] + r[9] * l[7] + r[10] * l[11] + r[11] * l[15];
+				out[12] = r[12] * l[0] + r[13] * l[4] + r[14] * l[8] + r[15] * l[12];
+				out[13] = r[12] * l[1] + r[13] * l[5] + r[14] * l[9] + r[15] * l[13];
+				out[14] = r[12] * l[2] + r[13] * l[6] + r[14] * l[10] + r[15] * l[14];
+				out[15] = r[12] * l[3] + r[13] * l[7] + r[14] * l[11] + r[15] * l[15];
 			}
 
-			static void CalculateDeterminant(T vectors_[16]) 
+			constexpr static void CalculateDeterminant(T vectors_[16]) 
 			{
 				// subscript: row, column
 				T m11 = in[0], m21 = in[1], m31 = in[2], m41 = in[3],
@@ -247,7 +247,7 @@ namespace XREX
 				return determinant;
 			}
 
-			bool static DoInverse(T out[16], T const in[16])
+			constexpr bool static DoInverse(T out[16], T const in[16])
 			{
 				// subscript: row, column
 				T m11 = in[0], m21 = in[1], m31 = in[2], m41 = in[3],
