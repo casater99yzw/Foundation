@@ -1,32 +1,63 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Files">
+    <Filter Include="Core">
+      <UniqueIdentifier>{e91923d2-c557-4365-aa3d-f52b91262964}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="_Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{20225d22-739c-46ea-bb27-04d9232f695b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CompressedPair.h">
-      <Filter>Files</Filter>
+    <ClInclude Include="Core\BasicType.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="ReferenceCount.h">
-      <Filter>Files</Filter>
+    <ClInclude Include="Core\BitFlag.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="BitFlag.h">
-      <Filter>Files</Filter>
+    <ClInclude Include="Core\CompressedPair.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="ScopeGuard.h">
-      <Filter>Files</Filter>
+    <ClInclude Include="Core\ReferenceCount.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="BasicType.h">
-      <Filter>Files</Filter>
+    <ClInclude Include="Core\ScopeGuard.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="GeometryFoundation.h">
-      <Filter>Files</Filter>
+    <ClInclude Include="Core\Utility.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Utility.h">
-      <Filter>Files</Filter>
+    <ClInclude Include="Math\Angle.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Color.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Geometry.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Math.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathHelper.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Quaternion.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Size.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
