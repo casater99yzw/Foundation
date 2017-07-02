@@ -1,6 +1,5 @@
 #pragma once
 #include "Core/BasicType.h"
-#include "Math/Math.h"
 #include "Math/MathHelper.h"
 
 #include <array>
@@ -28,7 +27,7 @@ namespace X
 		static constexpr uint32 Dimension = N;
 
 	public:
-		static constexpr VectorT const Zero = VectorT(T(0));
+		static VectorT const Zero;
 
 	public:
 		/*
@@ -38,10 +37,10 @@ namespace X
 
 		constexpr explicit VectorT(T const* r)
 		{
-			MathHelper::VectorHelper<T, N>::DoCopy(&values_[0], r);
+			MathHelper::VectorHelper<T, N>::DoCopy(&values[0], r);
 		}
 		VectorT(VectorT const& r)
-			: values_(r.values_)
+			: values(r.values)
 		{
 		}
 	private:
@@ -54,13 +53,13 @@ namespace X
 		template <typename U, uint32 M>
 		constexpr void DoConstructFromOtherSizedVector(VectorT<U, M> const& r, SmallerSizeTag)
 		{
-			MathHelper::VectorHelper<T, M>::DoCopy(&values_[0], &r[0]);
-			MathHelper::VectorHelper<T, N - M>::DoAssign(&values_[M], 0); // fill rest with 0
+			MathHelper::VectorHelper<T, M>::DoCopy(&values[0], &r[0]);
+			MathHelper::VectorHelper<T, N - M>::DoAssign(&values[M], 0); // fill rest with 0
 		}
 		template <typename U, uint32 M>
 		constexpr void DoConstructFromOtherSizedVector(VectorT<U, M> const& r, LargerSizeTag)
 		{
-			MathHelper::VectorHelper<T, N>::DoCopy(&values_[0], &r[0]);
+			MathHelper::VectorHelper<T, N>::DoCopy(&values[0], &r[0]);
 		}
 	public:
 		template <typename U, uint32 M>
@@ -70,37 +69,37 @@ namespace X
 		}
 		constexpr explicit VectorT(T const& r)
 		{
-			MathHelper::VectorHelper<T, N>::DoAssign(&values_[0], r);
+			MathHelper::VectorHelper<T, N>::DoAssign(&values[0], r);
 		}
 		constexpr VectorT(T const& x, T const& y)
 		{
 			static_assert(Dimension == 2, "Dimension 2 only");
 
-			values_[0] = x;
-			values_[1] = y;
+			values[0] = x;
+			values[1] = y;
 		}
 		constexpr VectorT(T const& x, T const& y, T const& z)
 		{
 			static_assert(Dimension == 3, "Dimension 3 only");
 
-			values_[0] = x;
-			values_[1] = y;
-			values_[2] = z;
+			values[0] = x;
+			values[1] = y;
+			values[2] = z;
 		}
 		constexpr VectorT(T const& x, T const& y, T const& z, T const& w)
 		{
 			static_assert(Dimension == 4, "Dimension 4 only");
 
-			values_[0] = x;
-			values_[1] = y;
-			values_[2] = z;
-			values_[3] = w;
+			values[0] = x;
+			values[1] = y;
+			values[2] = z;
+			values[3] = w;
 		}
 		constexpr VectorT& operator=(VectorT const& r)
 		{
 			if (this != &r)
 			{
-				values_ = r.values_;
+				values = r.values;
 			}
 			return *this;
 		}
@@ -115,133 +114,133 @@ namespace X
 		constexpr T const& operator[](uint32 index) const
 		{
 			assert(index < Dimension);
-			return values_[index];
+			return values[index];
 		}
 
 		constexpr T const& X() const
 		{
 			static_assert(Dimension >= 1, "");
-			return values_[0];
+			return values[0];
 		}
 
 		constexpr T const& Y() const
 		{
 			static_assert(Dimension >= 2, "");
-			return values_[1];
+			return values[1];
 		}
 
-		T const& Z() const
+		constexpr T const& Z() const
 		{
 			static_assert(Dimension >= 3, "");
-			return values_[2];
+			return values[2];
 		}
 
-		T const& W() const
+		constexpr T const& W() const
 		{
 			static_assert(Dimension >= 4, "");
-			return values_[3];
+			return values[3];
 		}
 
 
-		friend VectorT operator +(VectorT const& l, VectorT const& r)
+		friend constexpr VectorT operator+(VectorT const& l, VectorT const& r)
 		{
 			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoAdd(&temp.values_[0], &l.values_[0], &r.values_[0]);
+			MathHelper::VectorHelper<T, N>::DoAdd(&temp.values[0], &l.values[0], &r.values[0]);
 			return temp;
 		}
 
-		friend VectorT operator -(VectorT const& l, VectorT const& r)
+		friend constexpr VectorT operator-(VectorT const& l, VectorT const& r)
 		{
 			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoSubtract(&temp.values_[0], &l.values_[0], &r.values_[0]);
+			MathHelper::VectorHelper<T, N>::DoSubtract(&temp.values[0], &l.values[0], &r.values[0]);
 			return temp;
 		}
 
-		friend VectorT operator *(VectorT const& l, VectorT const& r)
+		friend constexpr VectorT operator*(VectorT const& l, VectorT const& r)
 		{
 			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoMultiply(&temp.values_[0], &l.values_[0], &r.values_[0]);
+			MathHelper::VectorHelper<T, N>::DoMultiply(&temp.values[0], &l.values[0], &r.values[0]);
 			return temp;
 		}
 
-		friend VectorT operator *(VectorT const& l, T const& r)
+		friend constexpr VectorT operator*(VectorT const& l, T const& r)
 		{
 			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoScale(&temp.values_[0], &l.values_[0], r);
+			MathHelper::VectorHelper<T, N>::DoScale(&temp.values[0], &l.values[0], r);
 			return temp;
 		}
-		friend VectorT operator *(T const& l, VectorT const& r)
+		friend constexpr VectorT operator*(T const& l, VectorT const& r)
 		{
 			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoScale(&temp.values_[0], &r.values_[0], l);
-			return temp;
-		}
-
-		friend VectorT operator /(VectorT const& l, VectorT const& r)
-		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoDivide(&temp.values_[0], &l.values_[0], &r.values_[0]);
+			MathHelper::VectorHelper<T, N>::DoScale(&temp.values[0], &r.values[0], l);
 			return temp;
 		}
 
-		friend VectorT operator /(VectorT const& l, T const& r)
+		friend constexpr VectorT operator/(VectorT const& l, VectorT const& r)
 		{
 			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoScale(&temp.values_[0], &l.values_[0], T(1) / r);
+			MathHelper::VectorHelper<T, N>::DoDivide(&temp.values[0], &l.values[0], &r.values[0]);
 			return temp;
 		}
 
-		VectorT const& operator +() const
+		friend constexpr VectorT operator/(VectorT const& l, T const& r)
+		{
+			VectorT temp;
+			MathHelper::VectorHelper<T, N>::DoScale(&temp.values[0], &l.values[0], T(1) / r);
+			return temp;
+		}
+
+		constexpr VectorT const& operator+() const
 		{
 			return *this; 
 		}
-		VectorT operator -() const
+		constexpr VectorT operator-() const
 		{
 			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoNegate(&temp.values_[0], &values_[0]);
+			MathHelper::VectorHelper<T, N>::DoNegate(&temp.values[0], &values[0]);
 			return temp;
 		}
 
-		friend bool operator ==(VectorT const& l, VectorT const& r)
+		friend constexpr bool operator==(VectorT const& l, VectorT const& r)
 		{
-			return l.values_ == r.values_;
+			return l.values == r.values;
 			//return MathHelper::VectorHelper<T, N>::DoEqual(&l[0], &r[0]);
 		}
 
-		friend bool	operator !=(VectorT const& l, VectorT const& r)
+		friend constexpr bool	operator!=(VectorT const& l, VectorT const& r)
 		{
-			return l.values_ != r.values_;
+			return l.values != r.values;
 		}
 
-		VectorT Normalize() const // float32 & float64 only
+		constexpr VectorT Normalize() const // float32 & float64 only
 		{
 			return *this * ReciprocalSqrt(LengthSquared());
 		}
 
-		T Length() const // float32 & float64 only
+		constexpr T Length() const // float32 & float64 only
 		{
 			// return T(1) / ReciprocalSqrt(LengthSquared());
 			return std::sqrt(LengthSquared());
 		}
 
-		T LengthSquared() const
+		constexpr T LengthSquared() const
 		{
 			return Dot(*this, *this);
 		}
 
-		friend T Dot(VectorT const& l, VectorT const& r)
+		friend constexpr T Dot(VectorT const& l, VectorT const& r)
 		{
-			return MathHelper::VectorHelper<T, N>::DoDot(&l.values_[0], &r.values_[0]);
+			return MathHelper::VectorHelper<T, N>::DoDot(&l.values[0], &r.values[0]);
 		}
 
-		T const* GetArray() const
+		constexpr T const* GetArray() const
 		{
-			return &values_[0];
+			return &values[0];
 		}
 
-	private:
-		std::array<T, N> values_;
+		T values[N] = {};
 	};
+
 
 	template <typename T, uint32 N>
 	VectorT<T, N> const VectorT<T, N>::Zero = VectorT(T(0));
