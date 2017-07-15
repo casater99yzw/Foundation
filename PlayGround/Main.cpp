@@ -1,8 +1,8 @@
-#include "CompressedPair.h"
+#include "Core/CompressedPair.h"
 #define MemoryDebug
-#include "ReferenceCount.h"
+#include "Core/ReferenceCount.h"
 
-#include "BitFlag.h"
+#include "Core/BitFlag.h"
 
 #include <utility>
 #include <memory>

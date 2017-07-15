@@ -8,273 +8,477 @@
 namespace X
 {
 
-	/*
-	 *	Immutable type.
-	 */
 	template <typename T, uint32 N>
-	class VectorT
+	class VectorT;
+
+
+	template <typename T>
+	class VectorT<T, 2>
 	{
-		static_assert(N >= 1 && N <= 4, "");
-
-		template <typename U, uint32 M>
-		friend class VectorT;
-
-		// Matrix knows the storage details
-		template <typename T>
-		friend class Matrix4;
-
 	public:
-		static constexpr uint32 Dimension = N;
+		static constexpr uint32 Dimension = 2;
 
-	public:
 		static VectorT const Zero;
 
+		T x = T(0);
+		T y = T(0);
+
 	public:
-		/*
-		 *	Create an uninitialized VectorT.
-		 */
-		constexpr VectorT() = default;
 
-		constexpr explicit VectorT(T const* r)
-		{
-			MathHelper::VectorHelper<T, N>::DoCopy(&values[0], r);
-		}
-		VectorT(VectorT const& r)
-			: values(r.values)
-		{
-		}
-	private:
-		struct SmallerSizeTag
-		{
-		};
-		struct LargerSizeTag
-		{
-		};
-		template <typename U, uint32 M>
-		constexpr void DoConstructFromOtherSizedVector(VectorT<U, M> const& r, SmallerSizeTag)
-		{
-			MathHelper::VectorHelper<T, M>::DoCopy(&values[0], &r[0]);
-			MathHelper::VectorHelper<T, N - M>::DoAssign(&values[M], 0); // fill rest with 0
-		}
-		template <typename U, uint32 M>
-		constexpr void DoConstructFromOtherSizedVector(VectorT<U, M> const& r, LargerSizeTag)
-		{
-			MathHelper::VectorHelper<T, N>::DoCopy(&values[0], &r[0]);
-		}
-	public:
-		template <typename U, uint32 M>
-		constexpr explicit VectorT(VectorT<U, M> const& r)
-		{
-			DoConstructFromOtherSizedVector(r, std::conditional<M >= N, LargerSizeTag, SmallerSizeTag>::type());
-		}
-		constexpr explicit VectorT(T const& r)
-		{
-			MathHelper::VectorHelper<T, N>::DoAssign(&values[0], r);
-		}
-		constexpr VectorT(T const& x, T const& y)
-		{
-			static_assert(Dimension == 2, "Dimension 2 only");
+		constexpr VectorT() noexcept = default;
 
-			values[0] = x;
-			values[1] = y;
-		}
-		constexpr VectorT(T const& x, T const& y, T const& z)
-		{
-			static_assert(Dimension == 3, "Dimension 3 only");
+		constexpr VectorT(T const& x, T const& y) noexcept
+			: x(x), y(y) {}
 
-			values[0] = x;
-			values[1] = y;
-			values[2] = z;
-		}
-		constexpr VectorT(T const& x, T const& y, T const& z, T const& w)
-		{
-			static_assert(Dimension == 4, "Dimension 4 only");
+		VectorT(VectorT const& r) noexcept
+			: x(r.x), y(r.y) {}
 
-			values[0] = x;
-			values[1] = y;
-			values[2] = z;
-			values[3] = w;
-		}
-		constexpr VectorT& operator=(VectorT const& r)
+		template <typename U>
+		constexpr explicit VectorT(VectorT<U, Dimension> const& r) noexcept
+			: x(static_cast<T>(r.x)), y(static_cast<T>(r.y)) {}
+
+		constexpr VectorT& operator=(VectorT const& r) noexcept
 		{
-			if (this != &r)
-			{
-				values = r.values;
-			}
+			x = r.x;
+			y = r.y;
 			return *this;
 		}
-		template <typename U, uint32 M>
-		constexpr VectorT& operator=(VectorT<U, M> const& r)
+		template <typename U>
+		constexpr VectorT& operator=(VectorT<U, Dimension> const& r) noexcept
 		{
-			DoConstructFromOtherSizedVector(r, std::conditional<M >= N, LargerSizeTag, SmallerSizeTag>::type());
+			x = static_cast<T>(r.x);
+			y = static_cast<T>(r.y);
 			return *this;
 		}
 
-
-		constexpr T const& operator[](uint32 index) const
+		constexpr T const& operator[](uint32 index) const noexcept
 		{
 			assert(index < Dimension);
-			return values[index];
+			switch (index) // to make this function usable in constexpr
+			{
+			case 0:
+				return x;
+			case 1:
+				return y;
+			}
 		}
 
-		constexpr T const& X() const
+		friend constexpr VectorT operator+(VectorT const& l, VectorT const& r) noexcept
 		{
-			static_assert(Dimension >= 1, "");
-			return values[0];
+			return VectorT(l.x + r.x, l.y + r.y);
 		}
 
-		constexpr T const& Y() const
+		friend constexpr VectorT operator-(VectorT const& l, VectorT const& r) noexcept
 		{
-			static_assert(Dimension >= 2, "");
-			return values[1];
+			return VectorT(l.x - r.x, l.y - r.y);
 		}
 
-		constexpr T const& Z() const
+		friend constexpr VectorT operator*(VectorT const& l, VectorT const& r) noexcept
 		{
-			static_assert(Dimension >= 3, "");
-			return values[2];
+			return VectorT(l.x * r.x, l.y * r.y);
 		}
 
-		constexpr T const& W() const
+		friend constexpr VectorT operator*(VectorT const& l, T const& r) noexcept
 		{
-			static_assert(Dimension >= 4, "");
-			return values[3];
+			return VectorT(l.x * r, l.y * r);
+
 		}
-
-
-		friend constexpr VectorT operator+(VectorT const& l, VectorT const& r)
+		friend constexpr VectorT operator*(T const& l, VectorT const& r) noexcept
 		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoAdd(&temp.values[0], &l.values[0], &r.values[0]);
-			return temp;
+			return VectorT(l * r.x, l * r.y);
 		}
 
-		friend constexpr VectorT operator-(VectorT const& l, VectorT const& r)
+		friend constexpr VectorT operator/(VectorT const& l, VectorT const& r) noexcept
 		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoSubtract(&temp.values[0], &l.values[0], &r.values[0]);
-			return temp;
+			return VectorT(l.x / r.x, l.y / r.y);
 		}
 
-		friend constexpr VectorT operator*(VectorT const& l, VectorT const& r)
+		friend constexpr VectorT operator/(VectorT const& l, T const& r) noexcept
 		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoMultiply(&temp.values[0], &l.values[0], &r.values[0]);
-			return temp;
+			return VectorT(l.x / r, l.y / r);
 		}
 
-		friend constexpr VectorT operator*(VectorT const& l, T const& r)
-		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoScale(&temp.values[0], &l.values[0], r);
-			return temp;
-		}
-		friend constexpr VectorT operator*(T const& l, VectorT const& r)
-		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoScale(&temp.values[0], &r.values[0], l);
-			return temp;
-		}
-
-		friend constexpr VectorT operator/(VectorT const& l, VectorT const& r)
-		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoDivide(&temp.values[0], &l.values[0], &r.values[0]);
-			return temp;
-		}
-
-		friend constexpr VectorT operator/(VectorT const& l, T const& r)
-		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoScale(&temp.values[0], &l.values[0], T(1) / r);
-			return temp;
-		}
-
-		constexpr VectorT const& operator+() const
+		constexpr VectorT const& operator+() const noexcept
 		{
 			return *this; 
 		}
-		constexpr VectorT operator-() const
+		constexpr VectorT operator-() const noexcept
 		{
-			VectorT temp;
-			MathHelper::VectorHelper<T, N>::DoNegate(&temp.values[0], &values[0]);
-			return temp;
+			return VectorT(-x, -y);
 		}
 
-		friend constexpr bool operator==(VectorT const& l, VectorT const& r)
+		friend constexpr bool operator==(VectorT const& l, VectorT const& r) noexcept
 		{
-			return l.values == r.values;
-			//return MathHelper::VectorHelper<T, N>::DoEqual(&l[0], &r[0]);
+			return l.x == r.x && l.y == r.y;
 		}
 
-		friend constexpr bool	operator!=(VectorT const& l, VectorT const& r)
+		friend constexpr bool operator!=(VectorT const& l, VectorT const& r) noexcept
 		{
-			return l.values != r.values;
+			return l.x != r.x || l.y != r.y;
 		}
 
-		constexpr VectorT Normalize() const // float32 & float64 only
+		constexpr VectorT Normalized() const noexcept
 		{
-			return *this * ReciprocalSqrt(LengthSquared());
+			static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only.");
+			return *this / Length();
 		}
 
-		constexpr T Length() const // float32 & float64 only
+		constexpr T Length() const noexcept
 		{
-			// return T(1) / ReciprocalSqrt(LengthSquared());
+			static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only.");
 			return std::sqrt(LengthSquared());
 		}
 
-		constexpr T LengthSquared() const
+		constexpr T LengthSquared() const noexcept
 		{
 			return Dot(*this, *this);
 		}
 
-		friend constexpr T Dot(VectorT const& l, VectorT const& r)
+		friend constexpr T Dot(VectorT const& l, VectorT const& r) noexcept
 		{
-			return MathHelper::VectorHelper<T, N>::DoDot(&l.values[0], &r.values[0]);
+			return l.x * r.x + l.y * r.y;
 		}
 
-		constexpr T const* GetArray() const
+		constexpr T const* GetArray() const noexcept
 		{
-			return &values[0];
+			return &x;
 		}
-
-		T values[N] = {};
 	};
 
+	template <typename T>
+	VectorT<T, 2> const VectorT<T, 2>::Zero = VectorT(T(0), T(0));
 
-	template <typename T, uint32 N>
-	VectorT<T, N> const VectorT<T, N>::Zero = VectorT(T(0));
+	template <typename T>
+	class VectorT<T, 3>
+	{
+	public:
+		static constexpr uint32 Dimension = 3;
 
+		static VectorT const Zero;
 
+		T x = T(0);
+		T y = T(0);
+		T z = T(0);
+
+	public:
+
+		constexpr VectorT() noexcept = default;
+
+		constexpr VectorT(T const& x, T const& y, T const& z) noexcept
+			: x(x), y(y), z(z) {}
+		constexpr VectorT(VectorT<T, 2> const& xy, T const& z) noexcept
+			: x(xy.x), y(xy.y), z(z) {}
+		constexpr VectorT(T const& x, VectorT<T, 2> const& yz) noexcept
+			: x(x), y(yz.x), z(yz.y) {}
+
+		VectorT(VectorT const& r) noexcept
+			: x(r.x), y(r.y), z(r.z) {}
+
+		template <typename U>
+		constexpr explicit VectorT(VectorT<U, Dimension> const& r) noexcept
+			: x(static_cast<T>(r.x)), y(static_cast<T>(r.y)), z(static_cast<T>(r.z)) {}
+
+		constexpr VectorT& operator=(VectorT const& r) noexcept
+		{
+			x = r.x;
+			y = r.y;
+			z = r.z;
+			return *this;
+		}
+		template <typename U>
+		constexpr VectorT& operator=(VectorT<U, Dimension> const& r) noexcept
+		{
+			x = static_cast<T>(r.x);
+			y = static_cast<T>(r.y);
+			z = static_cast<T>(r.z);
+			return *this;
+		}
+
+		constexpr T const& operator[](uint32 index) const noexcept
+		{
+			assert(index < Dimension);
+			switch (index) // to make this function usable in constexpr
+			{
+			case 0:
+				return x;
+			case 1:
+				return y;
+			case 2:
+				return z;
+			}
+		}
+
+		friend constexpr VectorT operator+(VectorT const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l.x + r.x, l.y + r.y, l.z + r.z);
+		}
+
+		friend constexpr VectorT operator-(VectorT const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l.x - r.x, l.y - r.y, l.z - r.z);
+		}
+
+		friend constexpr VectorT operator*(VectorT const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l.x * r.x, l.y * r.y, l.z * r.z);
+		}
+
+		friend constexpr VectorT operator*(VectorT const& l, T const& r) noexcept
+		{
+			return VectorT(l.x * r, l.y * r, l.z * r);
+
+		}
+		friend constexpr VectorT operator*(T const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l * r.x, l * r.y, l * r.z);
+		}
+
+		friend constexpr VectorT operator/(VectorT const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l.x / r.x, l.y / r.y, l.z / r.z);
+		}
+
+		friend constexpr VectorT operator/(VectorT const& l, T const& r) noexcept
+		{
+			return VectorT(l.x / r, l.y / r, l.z / r);
+		}
+
+		constexpr VectorT const& operator+() const noexcept
+		{
+			return *this;
+		}
+		constexpr VectorT operator-() const noexcept
+		{
+			return VectorT(-x, -y, -z);
+		}
+
+		friend constexpr bool operator==(VectorT const& l, VectorT const& r) noexcept
+		{
+			return l.x == r.x && l.y == r.y && l.z == r.z;
+		}
+
+		friend constexpr bool operator!=(VectorT const& l, VectorT const& r) noexcept
+		{
+			return l.x != r.x || l.y != r.y || l.z != r.z;
+		}
+
+		constexpr VectorT Normalized() const noexcept
+		{
+			static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only.");
+			return *this / Length();
+		}
+
+		constexpr T Length() const noexcept
+		{
+			static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only.");
+			return std::sqrt(LengthSquared());
+		}
+
+		constexpr T LengthSquared() const noexcept
+		{
+			return Dot(*this, *this);
+		}
+
+		friend constexpr T Dot(VectorT const& l, VectorT const& r) noexcept
+		{
+			return l.x * r.x + l.y * r.y + l.z * r.z;
+		}
+
+		constexpr T const* GetArray() const noexcept
+		{
+			return &x;
+		}
+	};
+
+	template <typename T>
+	VectorT<T, 3> const VectorT<T, 3>::Zero = VectorT(T(0), T(0), T(0));
 
 	template <typename T>
 	VectorT<T, 3> Cross(VectorT<T, 3> const& l, VectorT<T, 3> const& r)
 	{
 		return VectorT<T, 3>(
-			l.Y() * r.Z() - l.Z() * r.Y(),
-			l.Z() * r.X() - l.X() * r.Z(),
-			l.X() * r.Y() - l.Y() * r.X());
+			l.y * r.z - l.z * r.y,
+			l.z * r.x - l.x * r.z,
+			l.x * r.y - l.y * r.x);
 	}
 
+	template <typename T>
+	class VectorT<T, 4>
+	{
+	public:
+		static constexpr uint32 Dimension = 4;
 
-	typedef VectorT<float32, 1> f32V1;
-	typedef VectorT<float32, 2> f32V2;
-	typedef VectorT<float32, 3> f32V3;
-	typedef VectorT<float32, 4> f32V4;
+		static VectorT const Zero;
 
-	typedef VectorT<float64, 1> f64V1;
-	typedef VectorT<float64, 2> f64V2;
-	typedef VectorT<float64, 3> f64V3;
-	typedef VectorT<float64, 4> f64V4;
+		T x = T(0);
+		T y = T(0);
+		T z = T(0);
+		T w = T(0);
 
-	typedef VectorT<sint32, 1> s32V1;
-	typedef VectorT<sint32, 2> s32V2;
-	typedef VectorT<sint32, 3> s32V3;
-	typedef VectorT<sint32, 4> s32V4;
+	public:
 
-	typedef VectorT<uint32, 1> u32V1;
-	typedef VectorT<uint32, 2> u32V2;
-	typedef VectorT<uint32, 3> u32V3;
-	typedef VectorT<uint32, 4> u32V4;
+		constexpr VectorT() noexcept = default;
+
+		constexpr VectorT(T const& x, T const& y, T const& z, T const& w) noexcept
+			: x(x), y(y), z(z), w(w) {}
+		constexpr VectorT(VectorT<T, 2> const& xy, T const& z, T const& w) noexcept
+			: x(xy.x), y(xy.y), z(z), w(w) {}
+		constexpr VectorT(T const& x, VectorT<T, 2> const& yz, T const& w) noexcept
+			: x(x), y(yz.x), z(yz.y), w(w) {}
+		constexpr VectorT(T const& x, T const& y, VectorT<T, 2> const& zw) noexcept
+			: x(x), y(y), z(zw.x), w(zw.y) {}
+		constexpr VectorT(VectorT<T, 2> const& xy, VectorT<T, 2> const& zw) noexcept
+			: x(xy.x), y(xy.y), z(zw.x), w(zw.y) {}
+		constexpr VectorT(VectorT<T, 3> const& xyz, T const& w) noexcept
+			: x(xyz.x), y(xyz.y), z(xyz.z), w(w) {}
+		constexpr VectorT(T const& x, VectorT<T, 3> const& yzw) noexcept
+			: x(x), y(yzw.x), z(yzw.y), w(yzw.z) {}
+
+		VectorT(VectorT const& r) noexcept
+			: x(r.x), y(r.y), z(r.z), w(r.w) {}
+
+		template <typename U>
+		constexpr explicit VectorT(VectorT<U, Dimension> const& r) noexcept
+			: x(static_cast<T>(r.x)), y(static_cast<T>(r.y)), z(static_cast<T>(r.z)), w(static_cast<T>(r.w)) {}
+
+		constexpr VectorT& operator=(VectorT const& r) noexcept
+		{
+			x = r.x;
+			y = r.y;
+			z = r.z;
+			w = r.w;
+			return *this;
+		}
+		template <typename U>
+		constexpr VectorT& operator=(VectorT<U, Dimension> const& r) noexcept
+		{
+			x = static_cast<T>(r.x);
+			y = static_cast<T>(r.y);
+			z = static_cast<T>(r.z);
+			w = static_cast<T>(r.w);
+			return *this;
+		}
+
+		constexpr T const& operator[](uint32 index) const noexcept
+		{
+			assert(index < Dimension);
+			switch (index) // to make this function usable in constexpr
+			{
+			case 0:
+				return x;
+			case 1:
+				return y;
+			case 2:
+				return z;
+			case 3:
+				return w;
+			}
+		}
+
+		friend constexpr VectorT operator+(VectorT const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l.x + r.x, l.y + r.y, l.z + r.z, l.w + r.w);
+		}
+
+		friend constexpr VectorT operator-(VectorT const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l.x - r.x, l.y - r.y, l.z - r.z, l.w - r.w);
+		}
+
+		friend constexpr VectorT operator*(VectorT const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l.x * r.x, l.y * r.y, l.z * r.z, l.w * r.w);
+		}
+
+		friend constexpr VectorT operator*(VectorT const& l, T const& r) noexcept
+		{
+			return VectorT(l.x * r, l.y * r, l.z * r, l.w * r);
+
+		}
+		friend constexpr VectorT operator*(T const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l * r.x, l * r.y, l * r.z, l * r.w);
+		}
+
+		friend constexpr VectorT operator/(VectorT const& l, VectorT const& r) noexcept
+		{
+			return VectorT(l.x / r.x, l.y / r.y, l.z / r.z, l.w / r.w);
+		}
+
+		friend constexpr VectorT operator/(VectorT const& l, T const& r) noexcept
+		{
+			return VectorT(l.x / r, l.y / r, l.z / r, l.w / r);
+		}
+
+		constexpr VectorT const& operator+() const noexcept
+		{
+			return *this;
+		}
+		constexpr VectorT operator-() const noexcept
+		{
+			return VectorT(-x, -y, -z, -w);
+		}
+
+		friend constexpr bool operator==(VectorT const& l, VectorT const& r) noexcept
+		{
+			return l.x == r.x && l.y == r.y && l.z == r.z&& l.w == r.w;
+		}
+
+		friend constexpr bool operator!=(VectorT const& l, VectorT const& r) noexcept
+		{
+			return l.x != r.x || l.y != r.y || l.z != r.z || l.w != r.w;
+		}
+
+		constexpr VectorT Normalized() const noexcept
+		{
+			static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only.");
+			return *this / Length();
+		}
+
+		constexpr T Length() const noexcept
+		{
+			static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only.");
+			return std::sqrt(LengthSquared());
+		}
+
+		constexpr T LengthSquared() const noexcept
+		{
+			return Dot(*this, *this);
+		}
+
+		friend constexpr T Dot(VectorT const& l, VectorT const& r) noexcept
+		{
+			return l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
+		}
+
+		constexpr T const* GetArray() const noexcept
+		{
+			return &x;
+		}
+	};
+
+	template <typename T>
+	VectorT<T, 4> const VectorT<T, 4>::Zero = VectorT(T(0), T(0), T(0), T(0));
+
+
+	using f32V1 = VectorT<float32, 1>;
+	using f32V2 = VectorT<float32, 2>;
+	using f32V3 = VectorT<float32, 3>;
+	using f32V4 = VectorT<float32, 4>;
+
+	using f64V1 = VectorT<float64, 1>;
+	using f64V2 = VectorT<float64, 2>;
+	using f64V3 = VectorT<float64, 3>;
+	using f64V4 = VectorT<float64, 4>;
+
+	using s32V1 = VectorT<sint32, 1>;
+	using s32V2 = VectorT<sint32, 2>;
+	using s32V3 = VectorT<sint32, 3>;
+	using s32V4 = VectorT<sint32, 4>;
+
+	using u32V1 = VectorT<uint32, 1>;
+	using u32V2 = VectorT<uint32, 2>;
+	using u32V3 = VectorT<uint32, 3>;
+	using u32V4 = VectorT<uint32, 4>;
 
 }

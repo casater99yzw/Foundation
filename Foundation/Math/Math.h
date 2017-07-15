@@ -47,9 +47,6 @@ namespace X
 	template <class T>
 	constexpr T Square(T number) { return number * number; }
 
-	template <class T>
-	T ReciprocalSqrt(T number) { return 1 / std::sqrt(number); }
-
 
 	/*
 	 *	@return: angle in [0, PI] in radians.

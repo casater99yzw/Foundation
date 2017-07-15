@@ -222,7 +222,7 @@ namespace X
 				out[15] = r[12] * l[3] + r[13] * l[7] + r[14] * l[11] + r[15] * l[15];
 			}
 
-			constexpr static void CalculateDeterminant(T vectors_[16]) 
+			constexpr static void CalculateDeterminant(T in[16]) 
 			{
 				// subscript: row, column
 				T m11 = in[0], m21 = in[1], m31 = in[2], m41 = in[3],
@@ -271,7 +271,8 @@ namespace X
 				T determinant = (_1122_2112 * _3344_4334 - _1132_3112 * _2344_4324 + _1142_4112 * _2334_3324 + _2132_3122 * _1344_4314 - _2142_4122 * _1334_3314 + _3142_4132 * _1324_2314);
 
 				// non-invertible
-				if (Equal<T>(determinant, 0)) {
+				if (Equal<T>(determinant, 0))
+				{
 					return false;
 				}
 
