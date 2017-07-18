@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Base/Math.h"
+#include "Core/BasicType.h"
+#include "Math/Math.h"
 
 namespace X
 {
@@ -108,7 +109,7 @@ namespace X
 		}
 
 	private:
-		f32V4 value_;
+		V4F32 value_;
 	};
 
 }

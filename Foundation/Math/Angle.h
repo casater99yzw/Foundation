@@ -21,18 +21,6 @@ namespace X
 
 		constexpr Degree(Radian<T> radian);
 
-		friend constexpr bool operator==(Degree l, Degree r) { return l.value == r.value; }
-		friend constexpr bool operator!=(Degree l, Degree r) { return l.value != r.value; }
-		friend constexpr bool operator<(Degree l, Degree r) { return l.value < r.value; }
-		friend constexpr bool operator<=(Degree l, Degree r) { return l.value <= r.value; }
-		friend constexpr bool operator>(Degree l, Degree r) { return l.value > r.value; }
-		friend constexpr bool operator>=(Degree l, Degree r) { return l.value >= r.value; }
-
-		friend constexpr Degree operator+(Degree l, Degree r) { return Degree(l.value + r.value); }
-		friend constexpr Degree operator-(Degree l, Degree r) { return Degree(l.value - r.value); }
-		friend constexpr Degree operator*(Degree l, T r) { return Degree(l.value * r); }
-		friend constexpr Degree operator*(T l, Degree r) { return Degree(l * r.value); }
-
 		constexpr Degree operator+() const { return *this; }
 		constexpr Degree operator-() const { return Degree(-value); }
 
@@ -47,6 +35,29 @@ namespace X
 	};
 
 	template <class T>
+	constexpr bool operator==(Degree<T> l, Degree<T> r) { return l.value == r.value; }
+	template <class T>
+	constexpr bool operator!=(Degree<T> l, Degree<T> r) { return l.value != r.value; }
+	template <class T>
+	constexpr bool operator<(Degree<T> l, Degree<T> r) { return l.value < r.value; }
+	template <class T>
+	constexpr bool operator<=(Degree<T> l, Degree<T> r) { return l.value <= r.value; }
+	template <class T>
+	constexpr bool operator>(Degree<T> l, Degree<T> r) { return l.value > r.value; }
+	template <class T>
+	constexpr bool operator>=(Degree<T> l, Degree<T> r) { return l.value >= r.value; }
+
+	template <class T>
+	constexpr Degree<T> operator+(Degree<T> l, Degree<T> r) { return Degree<T>(l.value + r.value); }
+	template <class T>
+	constexpr Degree<T> operator-(Degree<T> l, Degree<T> r) { return Degree<T>(l.value - r.value); }
+	template <class T>
+	constexpr Degree<T> operator*(Degree<T> l, T r) { return Degree<T>(l.value * r); }
+	template <class T>
+	constexpr Degree<T> operator*(T l, Degree<T> r) { return Degree<T>(l * r.value); }
+
+
+	template <class T>
 	class Radian
 	{
 	public:
@@ -57,18 +68,6 @@ namespace X
 		constexpr explicit Radian(T v) : value(v) {}
 
 		constexpr Radian(Degree<T> degree);
-
-		friend constexpr bool operator==(Radian l, Radian r) { return l.value == r.value; }
-		friend constexpr bool operator!=(Radian l, Radian r) { return l.value != r.value; }
-		friend constexpr bool operator<(Radian l, Radian r) { return l.value < r.value; }
-		friend constexpr bool operator<=(Radian l, Radian r) { return l.value <= r.value; }
-		friend constexpr bool operator>(Radian l, Radian r) { return l.value > r.value; }
-		friend constexpr bool operator>=(Radian l, Radian r) { return l.value >= r.value; }
-
-		friend constexpr Radian operator+(Radian l, Radian r) { return Radian(l.value + r.value); }
-		friend constexpr Radian operator-(Radian l, Radian r) { return Radian(l.value - r.value); }
-		friend constexpr Radian operator*(Radian l, T r) { return Radian(l.value * r); }
-		friend constexpr Radian operator*(T l, Radian r) { return Radian(l * r.value); }
 
 		constexpr Radian operator+() const { return *this; }
 		constexpr Radian operator-() const { return Radian(-value); }
@@ -82,6 +81,29 @@ namespace X
 		static constexpr float64 D_PI = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620;
 		static constexpr T DegreeToRadian = static_cast<T>(D_PI / 180.0);
 	};
+
+	template <class T>
+	constexpr bool operator==(Radian<T> l, Radian<T> r) { return l.value == r.value; }
+	template <class T>
+	constexpr bool operator!=(Radian<T> l, Radian<T> r) { return l.value != r.value; }
+	template <class T>
+	constexpr bool operator<(Radian<T> l, Radian<T> r) { return l.value < r.value; }
+	template <class T>
+	constexpr bool operator<=(Radian<T> l, Radian<T> r) { return l.value <= r.value; }
+	template <class T>
+	constexpr bool operator>(Radian<T> l, Radian<T> r) { return l.value > r.value; }
+	template <class T>
+	constexpr bool operator>=(Radian<T> l, Radian<T> r) { return l.value >= r.value; }
+
+	template <class T>
+	constexpr Radian<T> operator+(Radian<T> l, Radian<T> r) { return Radian<T>(l.value + r.value); }
+	template <class T>
+	constexpr Radian<T> operator-(Radian<T> l, Radian<T> r) { return Radian<T>(l.value - r.value); }
+	template <class T>
+	constexpr Radian<T> operator*(Radian<T> l, T r) { return Radian<T>(l.value * r); }
+	template <class T>
+	constexpr Radian<T> operator*(T l, Radian<T> r) { return Radian<T>(l * r.value); }
+
 
 	template <class T>
 	constexpr Degree<T>::Degree(Radian<T> r) : value(r.value * RadianToDegree) {}

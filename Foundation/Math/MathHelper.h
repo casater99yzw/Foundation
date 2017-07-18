@@ -50,159 +50,10 @@ namespace X
 			}
 		};
 
-
-		template <typename T, uint32 N>
-		struct VectorHelper
-		{
-			static_assert(N <= 4, "Vector larger than 4 are not support.");
-			template <typename U>
-			constexpr static void DoCopy(T out[N], U const r[N])
-			{
-				out[0] = static_cast<T>(r[0]);
-				VectorHelper<T, N - 1>::DoCopy(out + 1, r + 1);
-			}
-
-			constexpr static void DoAssign(T out[N], T const& r)
-			{
-				out[0] = r;
-				VectorHelper<T, N - 1>::DoAssign(out + 1, r);
-			}
-
-			constexpr static void DoAdd(T out[N], T const l[N], T const r[N])
-			{
-				out[0] = l[0] + r[0];
-				VectorHelper<T, N - 1>::DoAdd(out + 1, l + 1, r + 1);
-			}
-
-			constexpr static void DoAdd(T out[N], T const l[N], T const& r)
-			{
-				out[0] = l[0] + r;
-				VectorHelper<T, N - 1>::DoAdd(out + 1, l + 1, r);
-			}
-
-			constexpr static void DoSubtract(T out[N], T const l[N], T const r[N])
-			{
-				out[0] = l[0] - r[0];
-				VectorHelper<T, N - 1>::DoSubtract(out + 1, l + 1, r + 1);
-			}
-
-			constexpr static void DoSubtract(T out[N], T const l[N], T const& r)
-			{
-				out[0] = l[0] - r;
-				VectorHelper<T, N - 1>::DoSubtract(out + 1, l + 1, r);
-			}
-
-			constexpr static void DoMultiply(T out[N], T const l[N], T const r[N])
-			{
-				out[0] = l[0] * r[0];
-				VectorHelper<T, N - 1>::DoMultiply(out + 1, l + 1, r + 1);
-			}
-
-			constexpr static void DoScale(T out[N], T const l[N], T const& r)
-			{
-				out[0] = l[0] * r;
-				VectorHelper<T, N - 1>::DoScale(out + 1, l + 1, r);
-			}
-
-			constexpr static void DoDivide(T out[N], T const l[N], T const r[N])
-			{
-				out[0] = l[0] / r[0];
-				VectorHelper<T, N - 1>::DoDivide(out + 1, l + 1, r + 1);
-			}
-
-			constexpr static void DoNegate(T out[N], T const r[N])
-			{
-				out[0] = -r[0];
-				VectorHelper<T, N - 1>::DoNegate(out + 1, r + 1);
-			}
-
-			constexpr static bool DoEqual(T const l[N], T const r[N])
-			{
-				return VectorHelper<T, 1>::DoEqual(l, r) && VectorHelper<T, N - 1>::DoEqual(l + 1, r + 1);
-			}
-
-			constexpr static void DoSwap(T l[N], T r[N])
-			{
-				std::swap(l[0], r[0]);
-				VectorHelper<T, N - 1>::DoSwap(l + 1, r + 1);
-			}
-
-
-			constexpr static T DoDot(T const l[1], T const r[1])
-			{
-				return l[0] * r[0] + VectorHelper<T, N - 1>::DoDot(l + 1, r + 1);
-			}
-		};
-
 		template <typename T>
-		struct VectorHelper<T, 1>
+		struct Matrix33Hepler
 		{
-			template <typename U>
-			constexpr static void DoCopy(T out[1], U const r[1])
-			{
-				out[0] = static_cast<T>(r[0]);
-			}
-
-			constexpr static void DoAssign(T out[1], T const& r)
-			{
-				out[0] = r;
-			}
-
-			constexpr static void DoAdd(T out[1], T const l[1], T const r[1])
-			{
-				out[0] = l[0] + r[0];
-			}
-
-			constexpr static void DoAdd(T out[1], T const l[1], T const r)
-			{
-				out[0] = l[0] + r;
-			}
-
-			constexpr static void DoSubtract(T out[1], T const l[1], T const r[1])
-			{
-				out[0] = l[0] - r[0];
-			}
-
-			constexpr static void DoSubtract(T out[1], T const l[1], T const& r)
-			{
-				out[0] = l[0] - r;
-			}
-
-			constexpr static void DoMultiply(T out[1], T const l[1], T const r[1])
-			{
-				out[0] = l[0] * r[0];
-			}
-
-			constexpr static void DoScale(T out[1], T const l[1], T const& r)
-			{
-				out[0] = l[0] * r;
-			}
-
-			constexpr static void DoDivide(T out[1], T const l[1], T const r[1])
-			{
-				out[0] = l[0] / r[0];
-			}
-
-			constexpr static void DoNegate(T out[1], T const r[1])
-			{
-				out[0] = -r[0];
-			}
-
-			constexpr static bool DoEqual(T const l[1], T const r[1])
-			{
-				return l[0] == r[0];
-			}
-
-			constexpr static T DoDot(T const l[1], T const r[1])
-			{
-				return l[0] * r[0];
-			}
-		};
-
-		template <typename T>
-		struct MatrixHepler
-		{
-			constexpr static void DoMultiply(T out[16], T const l[16], T const r[16])
+			constexpr static void DoMultiply(T out[16], T const l[16], T const r[16]) noexcept
 			{
 				out[0] = r[0] * l[0] + r[1] * l[4] + r[2] * l[8] + r[3] * l[12];
 				out[1] = r[0] * l[1] + r[1] * l[5] + r[2] * l[9] + r[3] * l[13];
@@ -222,7 +73,94 @@ namespace X
 				out[15] = r[12] * l[3] + r[13] * l[7] + r[14] * l[11] + r[15] * l[15];
 			}
 
-			constexpr static void CalculateDeterminant(T in[16]) 
+			constexpr static void CalculateDeterminant(T in[16]) noexcept
+			{
+				// subscript: row, column
+				T m11 = in[0], m21 = in[1], m31 = in[2],
+					m12 = in[3], m22 = in[4], m32 = in[5],
+					m13 = in[6], m23 = in[7], m33 = in[8];
+
+				T _2233 = m22 * m33,
+					_2133 = m21 * m33,
+					_2132 = m21 * m32,
+					_2332 = m23 * m32,
+					_2331 = m23 * m31,
+					_2231 = m22 * m31;
+
+				T _2233_2332 = _2233 - _2332,
+					_2133_2331 = _2133 - _2331,
+					_2132_2231 = _2132 - _2231;
+
+				float determinant = m11 * _2233_2332 - m12 * _2133_2331 + m13 * _2132_2231;
+				return determinant;
+			}
+
+			constexpr bool static DoInverse(T out[9], T const in[9]) noexcept
+			{
+				// subscript: row, column
+				T m11 = in[0], m21 = in[1], m31 = in[2],
+					m12 = in[3], m22 = in[4], m32 = in[5],
+					m13 = in[6], m23 = in[7], m33 = in[8];
+
+				T _2233 = m22 * m33,
+					_2133 = m21 * m33,
+					_2132 = m21 * m32,
+					_2332 = m23 * m32,
+					_2331 = m23 * m31,
+					_2231 = m22 * m31;
+
+				T _2233_2332 = _2233 - _2332,
+					_2133_2331 = _2133 - _2331,
+					_2132_2231 = _2132 - _2231;
+
+				float determinant = m11 * _2233_2332 - m12 * _2133_2331 + m13 * _2132_2231;
+
+				// non-invertible
+				if (Equal<T>(determinant, 0))
+				{
+					return false;
+				}
+
+				T inverseDeterminant = T(1) / determinant;
+
+				out[0] = _2233_2332 * inverseDeterminant;
+				out[1] = -_2133_2331 * inverseDeterminant;
+				out[2] = _2132_2231 * inverseDeterminant;
+				out[3] = (m13 * m32 - m12 * m33) * inverseDeterminant;
+				out[4] = (m11 * m33 - m13 * m31) * inverseDeterminant;
+				out[5] = (m12 * m31 - m11 * m32) * inverseDeterminant;
+				out[6] = (m12 * m23 - m13 * m22) * inverseDeterminant;
+				out[7] = (m13 * m21 - m11 * m23) * inverseDeterminant;
+				out[8] = (m11 * m22 - m12 * m21) * inverseDeterminant;
+
+				return true;
+			}
+		};
+
+		template <typename T>
+		struct Matrix44Hepler
+		{
+			constexpr static void DoMultiply(T out[16], T const l[16], T const r[16]) noexcept
+			{
+				out[0] = r[0] * l[0] + r[1] * l[4] + r[2] * l[8] + r[3] * l[12];
+				out[1] = r[0] * l[1] + r[1] * l[5] + r[2] * l[9] + r[3] * l[13];
+				out[2] = r[0] * l[2] + r[1] * l[6] + r[2] * l[10] + r[3] * l[14];
+				out[3] = r[0] * l[3] + r[1] * l[7] + r[2] * l[11] + r[3] * l[15];
+				out[4] = r[4] * l[0] + r[5] * l[4] + r[6] * l[8] + r[7] * l[12];
+				out[5] = r[4] * l[1] + r[5] * l[5] + r[6] * l[9] + r[7] * l[13];
+				out[6] = r[4] * l[2] + r[5] * l[6] + r[6] * l[10] + r[7] * l[14];
+				out[7] = r[4] * l[3] + r[5] * l[7] + r[6] * l[11] + r[7] * l[15];
+				out[8] = r[8] * l[0] + r[9] * l[4] + r[10] * l[8] + r[11] * l[12];
+				out[9] = r[8] * l[1] + r[9] * l[5] + r[10] * l[9] + r[11] * l[13];
+				out[10] = r[8] * l[2] + r[9] * l[6] + r[10] * l[10] + r[11] * l[14];
+				out[11] = r[8] * l[3] + r[9] * l[7] + r[10] * l[11] + r[11] * l[15];
+				out[12] = r[12] * l[0] + r[13] * l[4] + r[14] * l[8] + r[15] * l[12];
+				out[13] = r[12] * l[1] + r[13] * l[5] + r[14] * l[9] + r[15] * l[13];
+				out[14] = r[12] * l[2] + r[13] * l[6] + r[14] * l[10] + r[15] * l[14];
+				out[15] = r[12] * l[3] + r[13] * l[7] + r[14] * l[11] + r[15] * l[15];
+			}
+
+			constexpr static void CalculateDeterminant(T in[16]) noexcept
 			{
 				// subscript: row, column
 				T m11 = in[0], m21 = in[1], m31 = in[2], m41 = in[3],
@@ -247,7 +185,7 @@ namespace X
 				return determinant;
 			}
 
-			constexpr bool static DoInverse(T out[16], T const in[16])
+			constexpr bool static DoInverse(T out[16], T const in[16]) noexcept
 			{
 				// subscript: row, column
 				T m11 = in[0], m21 = in[1], m31 = in[2], m41 = in[3],
@@ -276,8 +214,7 @@ namespace X
 					return false;
 				}
 
-				T inverseDeterminant;
-				inverseDeterminant = T(1) / determinant;
+				T inverseDeterminant = T(1) / determinant;
 
 				out[0] = (m22 * _3344_4334 - m32 * _2344_4324 + m42 * _2334_3324) * inverseDeterminant;
 				out[1] = (-m21 * _3344_4334 + m31 * _2344_4324 - m41 * _2334_3324) * inverseDeterminant;
@@ -300,6 +237,5 @@ namespace X
 			}
 
 		};
-
 	}
 }

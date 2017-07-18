@@ -8,5 +8,4 @@ namespace X
 	{
 		return N;
 	}
-
 }

@@ -1,4 +1,15 @@
+#pragma once
+#include "Core/BasicType.h"
 
+#include "Math/Angle.h"
+#include "Math/Vector.h"
+#include "Math/Matrix.h"
+#include "Math/Quaternion.h"
+#include "Math/Geometry.h"
+
+
+#include <limits>
+#include <cmath>
 
 template <typename T>
 QuaternionT<T> QuaternionFromMatrix(Matrix4T<T> const& rotationMatrix)
@@ -89,8 +100,8 @@ VectorT<T, N> Transform(Matrix4T<T> const& matrix, VectorT<T, N> const& vector, 
 	MathHelper::TransformHelper<T, N>::DoTransform(const_cast<T*>(&temp[0]), &matrix[0], &vector[0], lastComponent);
 	return temp;
 }
-template f32V3 Transform(floatM44 const& matrix, f32V3 const& vector, float32 const& lastComponent);
-template f32V4 Transform(floatM44 const& matrix, f32V4 const& vector, float32 const& lastComponent);
+template V3F32 Transform(floatM44 const& matrix, V3F32 const& vector, float32 const& lastComponent);
+template V4F32 Transform(floatM44 const& matrix, V4F32 const& vector, float32 const& lastComponent);
 
 template <typename T>
 VectorT<T, 3> RotateByQuaternion(QuaternionT<T> const& quaternion, VectorT<T, 3> const& vector)
@@ -110,7 +121,7 @@ VectorT<T, 3> RotateByQuaternion(QuaternionT<T> const& quaternion, VectorT<T, 3>
 
 	return a * vector + b * quaternion.V() + c * crossV;
 }
-template f32V3 RotateByQuaternion(floatQ const& quaternion, f32V3 const& vector);
+template V3F32 RotateByQuaternion(floatQ const& quaternion, V3F32 const& vector);
 
 template <typename T, uint32 N>
 VectorT<T, N> TransformDirection(Matrix4T<T> const& matrix, VectorT<T, N> const& vector)
@@ -119,8 +130,8 @@ VectorT<T, N> TransformDirection(Matrix4T<T> const& matrix, VectorT<T, N> const&
 	MathHelper::TransformHelper<T, N>::DoTransformDirection(const_cast<T*>(&temp[0]), &matrix[0], &vector[0]);
 	return temp;
 }
-template f32V3 TransformDirection(floatM44 const& matrix, f32V3 const& vector);
-template f32V4 TransformDirection(floatM44 const& matrix, f32V4 const& vector);
+template V3F32 TransformDirection(floatM44 const& matrix, V3F32 const& vector);
+template V4F32 TransformDirection(floatM44 const& matrix, V4F32 const& vector);
 
 
 template <typename T>
@@ -139,7 +150,7 @@ Matrix4T<T> TranslationMatrix(VectorT<T, 3> const& v)
 {
 	return TranslationMatrix(v.X(), v.Y(), v.Z());
 }
-template floatM44 TranslationMatrix(f32V3 const& v);
+template floatM44 TranslationMatrix(V3F32 const& v);
 
 template <typename T>
 Matrix4T<T> ScalingMatrix(T const& s)
@@ -164,7 +175,7 @@ Matrix4T<T> ScalingMatrix(VectorT<T, 3> const& s)
 {
 	return ScalingMatrix(s.X(), s.Y(), s.Z());
 }
-template floatM44 ScalingMatrix(f32V3 const& s);
+template floatM44 ScalingMatrix(V3F32 const& s);
 
 template <typename T>
 Matrix4T<T> RotationMatrixX(T const& angleX)
@@ -256,7 +267,7 @@ Matrix4T<T> RotationMatrix(T const& angle, VectorT<T, 3> const& axis)
 
 	return temp;
 }
-template floatM44 RotationMatrix(float32 const& angle, f32V3 const& axis);
+template floatM44 RotationMatrix(float32 const& angle, V3F32 const& axis);
 
 template <typename T>
 Matrix4T<T> RotationMatrixFromTo(VectorT<T, 3> const& from, VectorT<T, 3> const& to)
@@ -301,7 +312,7 @@ Matrix4T<T> RotationMatrixFromTo(VectorT<T, 3> const& from, VectorT<T, 3> const&
 
 	return temp;
 }
-template floatM44 RotationMatrixFromTo(f32V3 const& from, f32V3 const& to);
+template floatM44 RotationMatrixFromTo(V3F32 const& from, V3F32 const& to);
 
 
 template <typename T>
@@ -323,7 +334,7 @@ QuaternionT<T> RotationQuaternion(T const& angle, VectorT<T, 3> const& axis)
 	T cha = std::cos(halfAngle);
 	return QuaternionT<T>(sha * axis.Normalize(), cha);
 }
-template floatQ RotationQuaternion(float32 const& angle, f32V3 const& axis);
+template floatQ RotationQuaternion(float32 const& angle, V3F32 const& axis);
 
 template <typename T>
 QuaternionT<T> RotationQuaternionFromTo(VectorT<T, 3> const& from, VectorT<T, 3> const& to)
@@ -348,7 +359,7 @@ QuaternionT<T> RotationQuaternionFromTo(VectorT<T, 3> const& from, VectorT<T, 3>
 	T cha = std::sqrt(T((1 + cos) * 0.5));
 	return QuaternionT<T>(sha * axis, cha).Normalize();
 }
-template floatQ RotationQuaternionFromTo(f32V3 const& from, f32V3 const& to);
+template floatQ RotationQuaternionFromTo(V3F32 const& from, V3F32 const& to);
 
 namespace
 {
@@ -431,7 +442,7 @@ Matrix4T<T> FaceToMatrix(VectorT<T, 3> const& to, VectorT<T, 3> const& up, Vecto
 
 	return world * localInverse;
 }
-template floatM44 FaceToMatrix(f32V3 const& to, f32V3 const& up, f32V3 const& localFront, f32V3 const& localUp);
+template floatM44 FaceToMatrix(V3F32 const& to, V3F32 const& up, V3F32 const& localFront, V3F32 const& localUp);
 
 template <typename T>
 QuaternionT<T> FaceToQuaternion(VectorT<T, 3> const& to, VectorT<T, 3> const& up, VectorT<T, 3> const& localFront, VectorT<T, 3> const& localUp)
@@ -457,7 +468,7 @@ QuaternionT<T> FaceToQuaternion(VectorT<T, 3> const& to, VectorT<T, 3> const& up
 	QuaternionT<T> localInverse = QuaternionFromMatrix(BaseMatrixByZReferenceY(localFront, localUp, true));
 	return world * localInverse;
 }
-template floatQ FaceToQuaternion(f32V3 const& to, f32V3 const& up, f32V3 const& localFront, f32V3 const& localUp);
+template floatQ FaceToQuaternion(V3F32 const& to, V3F32 const& up, V3F32 const& localFront, V3F32 const& localUp);
 
 
 template <typename T>
@@ -500,7 +511,7 @@ Matrix4T<T> LookToViewMatrix(VectorT<T, 3> const& eye, VectorT<T, 3> const& to, 
 
 	return temp;
 }
-template floatM44 LookToViewMatrix(f32V3 const& eye, f32V3 const& at, f32V3 const& up);
+template floatM44 LookToViewMatrix(V3F32 const& eye, V3F32 const& at, V3F32 const& up);
 
 template <typename T>
 Matrix4T<T> FrustumProjectionMatrix(T const& fieldOfView, T const& aspectRatio, T const& near, T const& far)

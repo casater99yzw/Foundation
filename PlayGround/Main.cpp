@@ -4,6 +4,9 @@
 
 #include "Core/BitFlag.h"
 
+#include "Math/Vector.h"
+#include "Math/Matrix.h"
+
 #include <utility>
 #include <memory>
 #include <cassert>
@@ -21,8 +24,31 @@ struct C
 	}
 };
 
+
+constexpr auto ConstantV()
+{
+	V4F32 a(1, 2, 3, 4);
+	V4F32 b(5, 6, 7, 8);
+
+	b = a;
+	return b;
+}
+
+constexpr auto v = ConstantV();
+
+constexpr auto ConstantM()
+{
+	M44F32 a(2);
+	M44F32 b(a.Column(0), a.Column(1), a.Column(2), a.Column(3));
+	return a;
+}
+
+constexpr auto m = ConstantM();
+
 int main()
 {
+	auto f = ConstantV();
+
 	std::pair<int, int> p;
 	std::unique_ptr<int> up;
 
