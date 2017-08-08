@@ -56,6 +56,13 @@ namespace X
 		constexpr VectorT const& operator+() const noexcept { return *this; }
 		constexpr VectorT operator-() const noexcept { return VectorT(-v[0]); }
 
+		constexpr VectorT& operator+=(VectorT const& r) noexcept { v[0] += r.v[0]; return *this; }
+		constexpr VectorT& operator-=(VectorT const& r) noexcept { v[0] -= r.v[0]; return *this; }
+		constexpr VectorT& operator*=(VectorT const& r) noexcept { v[0] *= r.v[0]; return *this; }
+		constexpr VectorT& operator*=(T const& r) noexcept { v[0] *= r; return *this; }
+		constexpr VectorT& operator/=(VectorT const& r) noexcept { v[0] /= r.v[0]; return *this; }
+		constexpr VectorT& operator/=(T const& r) noexcept { v[0] /= r; return *this; }
+
 		constexpr VectorT Normalized() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return *this / Length(); }
 
 		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return std::sqrt(LengthSquared()); }
@@ -69,21 +76,6 @@ namespace X
 
 	template <class T>
 	VectorT<T, 1> const VectorT<T, 1>::Zero = VectorT(T(0));
-
-	template <class T>
-	constexpr VectorT<T, 1> operator+(VectorT<T, 1> const& l, VectorT<T, 1> const& r) noexcept { return VectorT<T, 1>(l.v[0] + r.v[0]); }
-	template <class T>
-	constexpr VectorT<T, 1> operator-(VectorT<T, 1> const& l, VectorT<T, 1> const& r) noexcept { return VectorT<T, 1>(l.v[0] - r.v[0]); }
-	template <class T>
-	constexpr VectorT<T, 1> operator*(VectorT<T, 1> const& l, VectorT<T, 1> const& r) noexcept { return VectorT<T, 1>(l.v[0] * r.v[0]); }
-	template <class T>
-	constexpr VectorT<T, 1> operator*(VectorT<T, 1> const& l, T const& r) noexcept { return VectorT<T, 1>(l.v[0] * r); }
-	template <class T>
-	constexpr VectorT<T, 1> operator*(T const& l, VectorT<T, 1> const& r) noexcept { return VectorT<T, 1>(l * r.v[0]); }
-	template <class T>
-	constexpr VectorT<T, 1> operator/(VectorT<T, 1> const& l, VectorT<T, 1> const& r) noexcept { return VectorT<T, 1>(l.v[0] / r.v[0]); }
-	template <class T>
-	constexpr VectorT<T, 1> operator/(VectorT<T, 1> const& l, T const& r) noexcept { return VectorT<T, 1>(l.v[0] / r); }
 
 	template <class T>
 	constexpr bool operator==(VectorT<T, 1> const& l, VectorT<T, 1> const& r) noexcept { return l.v[0] == r.v[0]; }
@@ -113,6 +105,8 @@ namespace X
 
 		constexpr VectorT() noexcept = default;
 
+		constexpr VectorT(T const& v) noexcept : v{ v, v } {}
+
 		constexpr VectorT(T const& x, T const& y) noexcept : v{ x, y } {}
 
 		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0], r.v[1] } {}
@@ -140,6 +134,13 @@ namespace X
 		constexpr VectorT const& operator+() const noexcept { return *this; }
 		constexpr VectorT operator-() const noexcept { return VectorT(-v[0], -v[1]); }
 
+		constexpr VectorT& operator+=(VectorT const& r) noexcept { v[0] += r.v[0]; v[1] += r.v[1]; return *this; }
+		constexpr VectorT& operator-=(VectorT const& r) noexcept { v[0] -= r.v[0]; v[1] -= r.v[1]; return *this; }
+		constexpr VectorT& operator*=(VectorT const& r) noexcept { v[0] *= r.v[0]; v[1] *= r.v[1]; return *this; }
+		constexpr VectorT& operator*=(T const& r) noexcept { v[0] *= r; v[1] *= r; return *this; }
+		constexpr VectorT& operator/=(VectorT const& r) noexcept { v[0] /= r.v[0]; v[1] /= r.v[1]; return *this; }
+		constexpr VectorT& operator/=(T const& r) noexcept { v[0] /= r; v[1] /= r; return *this; }
+
 		constexpr VectorT Normalized() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return *this / Length(); }
 
 		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return std::sqrt(LengthSquared()); }
@@ -151,21 +152,6 @@ namespace X
 
 	template <class T>
 	VectorT<T, 2> const VectorT<T, 2>::Zero = VectorT(T(0), T(0));
-
-	template <class T>
-	constexpr VectorT<T, 2> operator+(VectorT<T, 2> const& l, VectorT<T, 2> const& r) noexcept { return VectorT<T, 2>(l.v[0] + r.v[0], l.v[1] + r.v[1]); }
-	template <class T>
-	constexpr VectorT<T, 2> operator-(VectorT<T, 2> const& l, VectorT<T, 2> const& r) noexcept { return VectorT<T, 2>(l.v[0] - r.v[0], l.v[1] - r.v[1]); }
-	template <class T>
-	constexpr VectorT<T, 2> operator*(VectorT<T, 2> const& l, VectorT<T, 2> const& r) noexcept { return VectorT<T, 2>(l.v[0] * r.v[0], l.v[1] * r.v[1]); }
-	template <class T>
-	constexpr VectorT<T, 2> operator*(VectorT<T, 2> const& l, T const& r) noexcept { return VectorT<T, 2>(l.v[0] * r, l.v[1] * r); }
-	template <class T>
-	constexpr VectorT<T, 2> operator*(T const& l, VectorT<T, 2> const& r) noexcept { return VectorT<T, 2>(l * r.v[0], l * r.v[1]); }
-	template <class T>
-	constexpr VectorT<T, 2> operator/(VectorT<T, 2> const& l, VectorT<T, 2> const& r) noexcept { return VectorT<T, 2>(l.v[0] / r.v[0], l.v[1] / r.v[1]); }
-	template <class T>
-	constexpr VectorT<T, 2> operator/(VectorT<T, 2> const& l, T const& r) noexcept { return VectorT<T, 2>(l.v[0] / r, l.v[1] / r); }
 
 	template <class T>
 	constexpr bool operator==(VectorT<T, 2> const& l, VectorT<T, 2> const& r) noexcept { return l.v[0] == r.v[0] && l.v[1] == r.v[1]; }
@@ -195,6 +181,8 @@ namespace X
 		};
 
 		constexpr VectorT() noexcept = default;
+
+		constexpr VectorT(T const& v) noexcept : v{ v, v, v } {}
 
 		constexpr VectorT(T const& x, T const& y, T const& z) noexcept : v{ x, y, z } {}
 		constexpr VectorT(VectorT<T, 2> const& xy, T const& z) noexcept : v{ xy.v[0], xy.v[1], z } {}
@@ -228,6 +216,13 @@ namespace X
 		constexpr VectorT const& operator+() const noexcept { return *this; }
 		constexpr VectorT operator-() const noexcept { return VectorT(-v[0], -v[1], -v[2]); }
 
+		constexpr VectorT& operator+=(VectorT const& r) noexcept { v[0] += r.v[0]; v[1] += r.v[1]; v[2] += r.v[2]; return *this; }
+		constexpr VectorT& operator-=(VectorT const& r) noexcept { v[0] -= r.v[0]; v[1] -= r.v[1]; v[2] -= r.v[2]; return *this; }
+		constexpr VectorT& operator*=(VectorT const& r) noexcept { v[0] *= r.v[0]; v[1] *= r.v[1]; v[2] *= r.v[2]; return *this; }
+		constexpr VectorT& operator*=(T const& r) noexcept { v[0] *= r; v[1] *= r; v[2] *= r; return *this; }
+		constexpr VectorT& operator/=(VectorT const& r) noexcept { v[0] /= r.v[0]; v[1] /= r.v[1]; v[2] /= r.v[2]; return *this; }
+		constexpr VectorT& operator/=(T const& r) noexcept { v[0] /= r; v[1] /= r; v[2] /= r; return *this; }
+
 		constexpr VectorT Normalized() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return *this / Length(); }
 
 		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return std::sqrt(LengthSquared()); }
@@ -239,21 +234,6 @@ namespace X
 
 	template <class T>
 	VectorT<T, 3> const VectorT<T, 3>::Zero = VectorT(T(0), T(0), T(0));
-
-	template <class T>
-	constexpr VectorT<T, 3> operator+(VectorT<T, 3> const& l, VectorT<T, 3> const& r) noexcept { return VectorT<T, 3>(l.v[0] + r.v[0], l.v[1] + r.v[1], l.v[2] + r.v[2]); }
-	template <class T>
-	constexpr VectorT<T, 3> operator-(VectorT<T, 3> const& l, VectorT<T, 3> const& r) noexcept { return VectorT<T, 3>(l.v[0] - r.v[0], l.v[1] - r.v[1], l.v[2] - r.v[2]); }
-	template <class T>
-	constexpr VectorT<T, 3> operator*(VectorT<T, 3> const& l, VectorT<T, 3> const& r) noexcept { return VectorT<T, 3>(l.v[0] * r.v[0], l.v[1] * r.v[1], l.v[2] * r.v[2]); }
-	template <class T>
-	constexpr VectorT<T, 3> operator*(VectorT<T, 3> const& l, T const& r) noexcept { return VectorT<T, 3>(l.v[0] * r, l.v[1] * r, l.v[2] * r); }
-	template <class T>
-	constexpr VectorT<T, 3> operator*(T const& l, VectorT<T, 3> const& r) noexcept { return VectorT<T, 3>(l * r.v[0], l * r.v[1], l * r.v[2]); }
-	template <class T>
-	constexpr VectorT<T, 3> operator/(VectorT<T, 3> const& l, VectorT<T, 3> const& r) noexcept { return VectorT<T, 3>(l.v[0] / r.v[0], l.v[1] / r.v[1], l.v[2] / r.v[2]); }
-	template <class T>
-	constexpr VectorT<T, 3> operator/(VectorT<T, 3> const& l, T const& r) noexcept { return VectorT<T, 3>(l.v[0] / r, l.v[1] / r, l.v[2] / r); }
 
 	template <class T>
 	constexpr bool operator==(VectorT<T, 3> const& l, VectorT<T, 3> const& r) noexcept { return l.v[0] == r.v[0] && l.v[1] == r.v[1] && l.v[2] == r.v[2]; }
@@ -286,6 +266,8 @@ namespace X
 		};
 
 		constexpr VectorT() noexcept = default;
+
+		constexpr VectorT(T const& v) noexcept : v{ v, v, v, v } {}
 
 		constexpr VectorT(T const& x, T const& y, T const& z, T const& w) noexcept : v{ x, y, z, w } {}
 		constexpr VectorT(VectorT<T, 2> const& xy, T const& z, T const& w) noexcept : v{ xy.v[0], xy.v[1], z, w } {}
@@ -327,6 +309,13 @@ namespace X
 		constexpr VectorT const& operator+() const noexcept { return *this; }
 		constexpr VectorT operator-() const noexcept { return VectorT(-v[0], -v[1], -v[2], -v[3]); }
 
+		constexpr VectorT& operator+=(VectorT const& r) noexcept { v[0] += r.v[0]; v[1] += r.v[1]; v[2] += r.v[2]; v[3] += r.v[3]; return *this; }
+		constexpr VectorT& operator-=(VectorT const& r) noexcept { v[0] -= r.v[0]; v[1] -= r.v[1]; v[2] -= r.v[2]; v[3] -= r.v[3]; return *this; }
+		constexpr VectorT& operator*=(VectorT const& r) noexcept { v[0] *= r.v[0]; v[1] *= r.v[1]; v[2] *= r.v[2]; v[3] *= r.v[3]; return *this; }
+		constexpr VectorT& operator*=(T const& r) noexcept { v[0] *= r; v[1] *= r; v[2] *= r; v[3] *= r; return *this; }
+		constexpr VectorT& operator/=(VectorT const& r) noexcept { v[0] /= r.v[0]; v[1] /= r.v[1]; v[2] /= r.v[2]; v[3] /= r.v[3]; return *this; }
+		constexpr VectorT& operator/=(T const& r) noexcept { v[0] /= r; v[1] /= r; v[2] /= r; v[3] /= r; return *this; }
+
 		constexpr VectorT Normalized() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return *this / Length(); }
 
 		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return std::sqrt(LengthSquared()); }
@@ -340,27 +329,29 @@ namespace X
 	VectorT<T, 4> const VectorT<T, 4>::Zero = VectorT(T(0), T(0), T(0), T(0));
 
 	template <class T>
-	constexpr VectorT<T, 4> operator+(VectorT<T, 4> const& l, VectorT<T, 4> const& r) noexcept { return VectorT<T, 4>(l.v[0] + r.v[0], l.v[1] + r.v[1], l.v[2] + r.v[2], l.v[3] + r.v[3]); }
-	template <class T>
-	constexpr VectorT<T, 4> operator-(VectorT<T, 4> const& l, VectorT<T, 4> const& r) noexcept { return VectorT<T, 4>(l.v[0] - r.v[0], l.v[1] - r.v[1], l.v[2] - r.v[2], l.v[3] - r.v[3]); }
-	template <class T>
-	constexpr VectorT<T, 4> operator*(VectorT<T, 4> const& l, VectorT<T, 4> const& r) noexcept { return VectorT<T, 4>(l.v[0] * r.v[0], l.v[1] * r.v[1], l.v[2] * r.v[2], l.v[3] * r.v[3]); }
-
-	template <class T>
-	constexpr VectorT<T, 4> operator*(VectorT<T, 4> const& l, T const& r) noexcept { return VectorT<T, 4>(l.v[0] * r, l.v[1] * r, l.v[2] * r, l.v[3] * r); }
-	template <class T>
-	constexpr VectorT<T, 4> operator*(T const& l, VectorT<T, 4> const& r) noexcept { return VectorT<T, 4>(l * r.v[0], l * r.v[1], l * r.v[2], l * r.v[3]); }
-	template <class T>
-	constexpr VectorT<T, 4> operator/(VectorT<T, 4> const& l, VectorT<T, 4> const& r) noexcept { return VectorT<T, 4>(l.v[0] / r.v[0], l.v[1] / r.v[1], l.v[2] / r.v[2], l.v[3] / r.v[3]); }
-	template <class T>
-	constexpr VectorT<T, 4> operator/(VectorT<T, 4> const& l, T const& r) noexcept { return VectorT<T, 4>(l.v[0] / r, l.v[1] / r, l.v[2] / r, l.v[3] / r); }
-
-	template <class T>
 	constexpr bool operator==(VectorT<T, 4> const& l, VectorT<T, 4> const& r) noexcept { return l.v[0] == r.v[0] && l.v[1] == r.v[1] && l.v[2] == r.v[2]&& l.v[3] == r.v[3]; }
 	template <class T>
 	constexpr bool operator!=(VectorT<T, 4> const& l, VectorT<T, 4> const& r) noexcept { return l.v[0] != r.v[0] || l.v[1] != r.v[1] || l.v[2] != r.v[2] || l.v[3] != r.v[3]; }
 	template <class T>
 	constexpr T Dot(VectorT<T, 4> const& l, VectorT<T, 4> const& r) noexcept { return l.v[0] * r.v[0] + l.v[1] * r.v[1] + l.v[2] * r.v[2] + l.v[3] * r.v[3]; }
+
+
+	template <class T, uint32 Count>
+	constexpr VectorT<T, Count> operator+(VectorT<T, Count> const& l, VectorT<T, Count> const& r) noexcept { VectorT<T, Count> v = l; v += r; return v; }
+	template <class T, uint32 Count>
+	constexpr VectorT<T, Count> operator-(VectorT<T, Count> const& l, VectorT<T, Count> const& r) noexcept { VectorT<T, Count> v = l; v -= r; return v; }
+	template <class T, uint32 Count>
+	constexpr VectorT<T, Count> operator*(VectorT<T, Count> const& l, VectorT<T, Count> const& r) noexcept { VectorT<T, Count> v = l; v *= r; return v; }
+
+	template <class T, uint32 Count>
+	constexpr VectorT<T, Count> operator*(VectorT<T, Count> const& l, T const& r) noexcept { VectorT<T, Count> v = l; v *= r; return v; }
+	template <class T, uint32 Count>
+	constexpr VectorT<T, Count> operator*(T const& l, VectorT<T, Count> const& r) noexcept { VectorT<T, Count> v = r; v *= l; return v; }
+	template <class T, uint32 Count>
+	constexpr VectorT<T, Count> operator/(VectorT<T, Count> const& l, VectorT<T, Count> const& r) noexcept { VectorT<T, Count> v = l; v /= r; return v; }
+	template <class T, uint32 Count>
+	constexpr VectorT<T, Count> operator/(VectorT<T, Count> const& l, T const& r) noexcept { VectorT<T, Count> v = l; v /= r; return v; }
+
 
 	using V1F32 = VectorT<float32, 1>;
 	using V2F32 = VectorT<float32, 2>;
