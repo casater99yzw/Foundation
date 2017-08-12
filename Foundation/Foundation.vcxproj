@@ -18,6 +18,7 @@
     <ClInclude Include="Core\ScopeGuard.h" />
     <ClInclude Include="Core\Utility.h" />
     <ClInclude Include="Math\Angle.h" />
+    <ClInclude Include="Math\BasicMath.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Geometry.h" />
     <ClInclude Include="Math\Size.h" />

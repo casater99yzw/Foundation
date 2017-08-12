@@ -1,7 +1,6 @@
 #pragma once
 #include "Core/BasicType.h"
 #include "Core/Utility.h"
-#include "Math/MathHelper.h"
 #include <cassert>
 
 
@@ -36,11 +35,11 @@ namespace X
 
 		constexpr VectorT(T const& x) noexcept : v{ x } {}
 
-		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0] } {}
+// 		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0] } {}
 		template <class U>
 		constexpr explicit VectorT(VectorT<U, Count> const& r) noexcept : v{ T(r.v[0]) } {}
 
-		constexpr VectorT& operator=(VectorT const& r) noexcept { v[0] = r.v[0]; return *this; }
+// 		constexpr VectorT& operator=(VectorT const& r) noexcept { v[0] = r.v[0]; return *this; }
 		template <class U>
 		constexpr VectorT& operator=(VectorT<U, Count> const& r) noexcept { v[0] = T(r.v[0]); return *this; }
 
@@ -65,11 +64,11 @@ namespace X
 
 		constexpr VectorT Normalized() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return *this / Length(); }
 
-		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return std::sqrt(LengthSquared()); }
+		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Length() for floating point types only."); return std::sqrt(LengthSquared()); }
 
 		constexpr T LengthSquared() const noexcept { return Dot(*this, *this); }
 
-		constexpr T const* GetData() const noexcept { return v; }
+		T const* Data() const noexcept { return v; }
 
 		constexpr operator T() const noexcept { return v[0]; }
 	};
@@ -109,11 +108,11 @@ namespace X
 
 		constexpr VectorT(T const& x, T const& y) noexcept : v{ x, y } {}
 
-		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0], r.v[1] } {}
+// 		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0], r.v[1] } {}
 		template <class U>
 		constexpr explicit VectorT(VectorT<U, Count> const& r) noexcept : v{ T(r.v[0]), T(r.v[1]) } {}
 
-		constexpr VectorT& operator=(VectorT const& r) noexcept { v[0] = r.v[0]; v[1] = r.v[1]; return *this; }
+// 		constexpr VectorT& operator=(VectorT const& r) noexcept { v[0] = r.v[0]; v[1] = r.v[1]; return *this; }
 		template <class U>
 		constexpr VectorT& operator=(VectorT<U, Count> const& r) noexcept { v[0] = T(r.v[0]); v[1] = T(r.v[1]); return *this; }
 
@@ -143,11 +142,11 @@ namespace X
 
 		constexpr VectorT Normalized() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return *this / Length(); }
 
-		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return std::sqrt(LengthSquared()); }
+		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Length() for floating point types only."); return std::sqrt(LengthSquared()); }
 
 		constexpr T LengthSquared() const noexcept { return Dot(*this, *this); }
 
-		constexpr T const* GetData() const noexcept { return v; }
+		T const* Data() const noexcept { return v; }
 	};
 
 	template <class T>
@@ -188,11 +187,11 @@ namespace X
 		constexpr VectorT(VectorT<T, 2> const& xy, T const& z) noexcept : v{ xy.v[0], xy.v[1], z } {}
 		constexpr VectorT(T const& x, VectorT<T, 2> const& yz) noexcept : v{ x, yz.v[0], yz.v[1] } {}
 
-		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0], r.v[1], r.v[2] } {}
+// 		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0], r.v[1], r.v[2] } {}
 		template <class U>
 		constexpr explicit VectorT(VectorT<U, Count> const& r) noexcept : v{ T(r.v[0]), T(r.v[1]), T(r.v[2]) } {}
 
-		constexpr VectorT& operator=(VectorT const& r) noexcept { v[0] = r.v[0]; v[1] = r.v[1]; v[2] = r.v[2]; return *this; }
+// 		constexpr VectorT& operator=(VectorT const& r) noexcept { v[0] = r.v[0]; v[1] = r.v[1]; v[2] = r.v[2]; return *this; }
 		template <class U>
 		constexpr VectorT& operator=(VectorT<U, Count> const& r) noexcept { v[0] = T(r.v[0]); v[1] = T(r.v[1]); v[2] = T(r.v[2]); return *this; }
 
@@ -225,11 +224,11 @@ namespace X
 
 		constexpr VectorT Normalized() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return *this / Length(); }
 
-		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return std::sqrt(LengthSquared()); }
+		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Length() for floating point types only."); return std::sqrt(LengthSquared()); }
 
 		constexpr T LengthSquared() const noexcept { return Dot(*this, *this); }
 
-		constexpr T const* GetData() const noexcept { return v; }
+		T const* Data() const noexcept { return v; }
 	};
 
 	template <class T>
@@ -277,11 +276,11 @@ namespace X
 		constexpr VectorT(VectorT<T, 3> const& xyz, T const& w) noexcept : v{ xyz.v[0], xyz.v[1], xyz.v[2], w } {}
 		constexpr VectorT(T const& x, VectorT<T, 3> const& yzw) noexcept : v{ x, yzw.v[0], yzw.v[1], yzw.v[2] } {}
 
-		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0], r.v[1], r.v[2], r.v[3] } {}
+// 		constexpr VectorT(VectorT const& r) noexcept : v{ r.v[0], r.v[1], r.v[2], r.v[3] } {}
 		template <class U>
 		constexpr explicit VectorT(VectorT<U, Count> const& r) noexcept : v{ T(r.v[0]), T(r.v[1]), T(r.v[2]), T(r.v[3]) } {}
 
-		constexpr VectorT& operator=(VectorT const& r) noexcept { v[0] = r.v[0]; v[1] = r.v[1]; v[2] = r.v[2]; v[3] = r.v[3]; return *this; }
+// 		constexpr VectorT& operator=(VectorT const& r) noexcept { v[0] = r.v[0]; v[1] = r.v[1]; v[2] = r.v[2]; v[3] = r.v[3]; return *this; }
 		template <class U>
 		constexpr VectorT& operator=(VectorT<U, Count> const& r) noexcept { v[0] = T(r.v[0]); v[1] = T(r.v[1]); v[2] = T(r.v[2]); v[3] = T(r.v[3]); return *this; }
 
@@ -318,11 +317,11 @@ namespace X
 
 		constexpr VectorT Normalized() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return *this / Length(); }
 
-		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Normalized() for floating point types only."); return std::sqrt(LengthSquared()); }
+		constexpr T Length() const noexcept { static_assert(std::is_floating_point_v<T>, "Length() for floating point types only."); return std::sqrt(LengthSquared()); }
 
 		constexpr T LengthSquared() const noexcept { return Dot(*this, *this); }
 
-		T const* GetData() const noexcept { return v; }
+		T const* Data() const noexcept { return v; }
 	};
 
 	template <class T>

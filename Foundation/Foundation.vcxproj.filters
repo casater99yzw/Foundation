@@ -59,6 +59,9 @@
     <ClInclude Include="Math\Size.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="Math\BasicMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Math\Math.inl">
