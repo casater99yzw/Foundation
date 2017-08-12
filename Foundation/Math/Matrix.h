@@ -7,6 +7,7 @@
 #include "Math/MathHelper.h"
 #include "Math/BasicMath.h"
 #include "Math/Vector.h"
+#include "Math/Size.h"
 
 
 #include <array>
@@ -68,7 +69,8 @@ namespace X
 
 
 
-		constexpr T const& operator()(uint32 row, uint32 column) const noexcept { return v[column][row]; }
+		constexpr T const& operator[](Index2UI index) const noexcept { return v[index.Y()][index.X()]; }
+		constexpr T& operator[](Index2UI index) noexcept { return v[index.Y()][index.X()]; }
 
 		constexpr VectorT<T, C> const& operator[](uint32 index) const { return v[index]; }
 		constexpr VectorT<T, C>& operator[](uint32 index) { return v[index]; }
@@ -231,7 +233,8 @@ namespace X
 
 
 
-		constexpr T const& operator()(uint32 row, uint32 column) const noexcept { return v[column][row]; }
+		constexpr T const& operator[](Index2UI index) const noexcept { return v[index.Y()][index.X()]; }
+		constexpr T& operator[](Index2UI index) noexcept { return v[index.Y()][index.X()]; }
 
 		constexpr VectorT<T, C> const& operator[](uint32 index) const { return v[index]; }
 		constexpr VectorT<T, C>& operator[](uint32 index) { return v[index]; }
