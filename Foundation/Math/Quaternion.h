@@ -1,203 +1,121 @@
 #pragma once
 
-#include "Math/Math.h"
-#include "Vector.h"
-#include "MathHelper.h"
+#include "Math/Vector.h"
 
 namespace X
 {
 
-	/*
-	 *	Immutable type.
-	 */
 	template <typename T>
-	class QuaternionT
+	class Quaternion
 	{
-		template <typename U>
-		friend class QuaternionT;
-
 	public:
-		static uint32 const Dimension = 4;
+		static uint32 const Count = 4;
 
+		static Quaternion const Zero;
+		static Quaternion const Identity;
 
-	public:
-		/*
-		 *	Used for making error intentionally.
-		 */
-		static QuaternionT const Zero;
-		static QuaternionT const Identity;
-	public:
+		union
+		{
+			T v[Count];
 
-		/*
-		 *	Create an uninitialized QuaternionT.
-		 */
-		QuaternionT()
-		{
-		}
-		QuaternionT(QuaternionT const& r)
-			: values_(r.values_)
-		{
-		}
-		template <typename U>
-		explicit QuaternionT(QuaternionT<U> const& r)
-			: values_(r.values_)
-		{
-		}
-		explicit QuaternionT(VectorT<T, 4> const& r)
-			: values_(r)
-		{
-		}
-		QuaternionT(VectorT<T, 3> const& axis, T const& w)
-			: values_(axis.X(), axis.Y(), axis.Z(), w)
-		{
-		}
-		QuaternionT(T const& x, T const& y, T const& z, T const& w)
-			: values_(x, y, z, w)
-		{
-		}
-
-		QuaternionT& operator =(QuaternionT const& r)
-		{
-			if (this != &r)
+			struct
 			{
-				values_ = r.values_;
-			}
-			return *this;
-		}
+				union
+				{
+					Vector<T, 3> axis;
+					struct
+					{
+						T x;
+						T y;
+						T z;
+					};
+				};
+				T w;
+			};
+		};
+
+		constexpr Quaternion() noexcept = default;
+
+		constexpr Quaternion(T const& x, T const& y, T const& z, T const& w) noexcept : v{ x, y, z, w } {}
+		constexpr Quaternion(Vector<T, 3> const& axis, T const& w) noexcept : v{ axis[0], axis[1], axis[2], w } {}
+
 		template <typename U>
-		QuaternionT& operator =(QuaternionT<U> const& r)
-		{
-			values_ = r.values_;
-			return *this;
-		}
+		constexpr explicit Quaternion(Quaternion<U> const& r) noexcept : v{ r.x, r.y, r.z, r.w } {}
 
-		/*
-		 *	Rotation component is at index 3.
-		 */
-		T const& operator [](uint32 index) const
-		{
-			return values_[index];
-		}
+		constexpr T const& operator[](uint32 index) const noexcept { assert(index < Count); return v[index]; }
+		constexpr T& operator[](uint32 index) noexcept { assert(index < Count); return v[index]; }
 
-		T const& X() const
-		{
-			return values_.X();
-		}
-
-		T const& Y() const
-		{
-			return values_.Y();
-		}
-
-		T const& Z() const
-		{
-			return values_.Z();
-		}
-
-		T const& W() const
-		{
-			return values_.W();
-		}
-
-		VectorT<T, 3> const& V() const
-		{
-			// check offsets equality
-			assert(&(reinterpret_cast<VectorT<T, 4>*>(nullptr)->X()) == &(reinterpret_cast<VectorT<T, 4>*>(nullptr)->operator [](0)));
-			assert(&(reinterpret_cast<VectorT<T, 4>*>(nullptr)->Z()) == &(reinterpret_cast<VectorT<T, 4>*>(nullptr)->operator [](2)));
-			// evil hack, first three component are the axis.
-			return *reinterpret_cast<VectorT<T, 3> const*>(&values_);
-		}
-
-		friend QuaternionT operator +(QuaternionT const& l, QuaternionT const& r)
-		{
-			return QuaternionT(l.values_ + r.values_);
-		}
-
-		friend QuaternionT operator -(QuaternionT const& l, QuaternionT const& r)
-		{
-			return QuaternionT(l.values_ - r.values_);
-
-		}
-
-		friend QuaternionT operator *(QuaternionT const& l, QuaternionT const& r)
-		{
-			// see Mathematics for 3D Game Programming and Computer Graphics, 3rd. 4.6.1 Quaternions Mathematics
-			return QuaternionT(
-				l.W() * r.X() + l.X() * r.W() + l.Y() * r.Z() - l.Z() * r.Y(),
-				l.W() * r.Y() + l.Y() * r.W() + l.Z() * r.X() - l.X() * r.Z(),
-				l.W() * r.Z() + l.Z() * r.W() + l.X() * r.Y() - l.Y() * r.X(),
-				l.W() * r.W() - l.X() * r.X() - l.Y() * r.Y() - l.Z() * r.Z());
-		}
-
-		friend QuaternionT operator *(QuaternionT const& l, T const& r)
-		{
-			return QuaternionT(l.values_ * r);
-		}
-		friend QuaternionT operator *(T const& l, QuaternionT const& r)
-		{
-			return QuaternionT(l * r.values_);
-		}
-
-		friend QuaternionT operator /(QuaternionT const& l, T const& r)
-		{
-			return QuaternionT(l.values_ / r);
-		}
-
-		QuaternionT const& operator +() const
-		{
-			return *this; 
-		}
-		QuaternionT operator -() const
-		{
-			return QuaternionT(-values_);
-		}
-
-		friend bool operator ==(QuaternionT const& l, QuaternionT const& r)
-		{
-			return l.values_ == r.values_;
-		}
-
-		friend bool	operator !=(QuaternionT const& l, QuaternionT const& r)
-		{
-			return l.values_ != r.values_;
-		}
-
-		QuaternionT Normalize() const
-		{
-			return QuaternionT(values_.Normalize());
-		}
-
-		QuaternionT Conjugate() const
-		{
-			return QuaternionT(-V(), values_.W());
-		}
-
-		QuaternionT Inverse() const
-		{
-			return QuaternionT(Conjugate() * (T(1) / LengthSquared()));
-		}
-
-		T Length() const
-		{
-			return values_.Length();
-		}
-
-		T LengthSquared() const
-		{
-			return values_.LengthSquared();
-		}
+		constexpr T const& X() const noexcept { return v[0]; }
+		constexpr T& X() noexcept { return v[0]; }
+		constexpr T const& Y() const noexcept { return v[1]; }
+		constexpr T& Y() noexcept { return v[1]; }
+		constexpr T const& Z() const noexcept { return v[2]; }
+		constexpr T& Z() noexcept { return v[2]; }
+		constexpr T const& W() const noexcept { return v[3]; }
+		constexpr T& W() noexcept { return v[3]; }
+		
+		Vector<T, 3> const& V() const noexcept { return axis; } // TODO how to make this constexpr?
+		Vector<T, 3>& V() noexcept { return axis; }
 
 
-	private:
-		VectorT<T, Dimension> values_;
+		constexpr Quaternion const& operator+() const noexcept { return *this; }
+		constexpr Quaternion operator-() const noexcept { return Quaternion(-v[0], -v[1], -v[2], -v[3]); }
+
+		constexpr Quaternion& operator+=(Quaternion const& r) noexcept { v[0] += r.v[0]; v[1] += r.v[1]; v[2] += r.v[2]; v[3] += r.v[3]; return *this; }
+		constexpr Quaternion& operator-=(Quaternion const& r) noexcept { v[0] -= r.v[0]; v[1] -= r.v[1]; v[2] -= r.v[2]; v[3] -= r.v[3]; return *this; }
+		constexpr Quaternion& operator*=(Quaternion const& r) noexcept { return *this = *this * r; }
+		constexpr Quaternion& operator*=(T const& r) noexcept { v[0] *= r; v[1] *= r; v[2] *= r; v[3] *= r; return *this; }
+		constexpr Quaternion& operator/=(T const& r) noexcept { v[0] /= r; v[1] /= r; v[2] /= r; v[3] /= r; return *this; }
+
+
+		constexpr Quaternion Normalized() const noexcept { return *this / Length(); }
+
+		constexpr Quaternion Conjugate() const noexcept { return Quaternion(-v[0], -v[1], -v[2], v[3]); }
+
+		constexpr Quaternion Inverse() const noexcept { return Quaternion(Conjugate() * (T(1) / LengthSquared())); }
+
+		constexpr T Length() const noexcept { return std::sqrt(LengthSquared()); }
+
+		constexpr T LengthSquared() const noexcept { return v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3]; }
 	};
 
 	template <typename T>
-	QuaternionT<T> const QuaternionT<T>::Zero = QuaternionT(VectorT<T, 3>(T(0)), T(0));
+	Quaternion<T> const Quaternion<T>::Zero = Quaternion(Vector<T, 3>(T(0)), T(0));
 
 	template <typename T>
-	QuaternionT<T> const QuaternionT<T>::Identity = QuaternionT(VectorT<T, 3>(T(0)), T(1));
+	Quaternion<T> const Quaternion<T>::Identity = Quaternion(Vector<T, 3>(T(0)), T(1));
 
-	typedef QuaternionT<float32> floatQ;
 
+	template <typename T>
+	constexpr Quaternion<T> operator+(Quaternion<T> const& l, Quaternion<T> const& r) noexcept { Quaternion<T> v = l; v += r; return v; }
+
+	template <typename T>
+	constexpr Quaternion<T> operator-(Quaternion<T> const& l, Quaternion<T> const& r) noexcept { Quaternion<T> v = l; v -= r; return v; }
+
+	template <typename T>
+	constexpr Quaternion<T> operator*(Quaternion<T> const& l, Quaternion<T> const& r) noexcept
+	{
+		return Quaternion<T>(
+			l.v[3] * r.v[0] + l.v[0] * r.v[3] + l.v[1] * r.v[2] - l.v[2] * r.v[1],
+			l.v[3] * r.v[1] + l.v[1] * r.v[3] + l.v[2] * r.v[0] - l.v[0] * r.v[2],
+			l.v[3] * r.v[2] + l.v[2] * r.v[3] + l.v[0] * r.v[1] - l.v[1] * r.v[0],
+			l.v[3] * r.v[3] - l.v[0] * r.v[0] - l.v[1] * r.v[1] - l.v[2] * r.v[2]);
+	}
+
+	template <typename T>
+	constexpr Quaternion<T> operator*(Quaternion<T> const& l, T const& r) noexcept { Quaternion<T> v = l; v *= r; return v; }
+	template <typename T>
+	constexpr Quaternion<T> operator*(T const& l, Quaternion<T> const& r) noexcept { Quaternion<T> v = r; v *= l; return v; }
+
+	template <typename T>
+	constexpr Quaternion<T> operator/(Quaternion<T> const& l, T const& r) noexcept { Quaternion<T> v = l; v /= r; return v; }
+
+	template <typename T>
+	constexpr bool operator==(Quaternion<T> const& l, Quaternion<T> const& r) noexcept { return l.v[0] == r.v[0] && l.v[1] == r.v[1] && l.v[2] == r.v[2] && l.v[3] == r.v[3]; }
+
+	template <typename T>
+	constexpr bool operator!=(Quaternion<T> const& l, Quaternion<T> const& r) noexcept { return l.v[0] != r.v[0] || l.v[1] != r.v[1] || l.v[2] != r.v[2] || l.v[3] != r.v[3]; }
+
+	using QF32 = Quaternion<float32>;
+	using QF64 = Quaternion<float64>;
 }

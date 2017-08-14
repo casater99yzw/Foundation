@@ -17,7 +17,7 @@ namespace X
 	{
 		static constexpr uint32 Dimension = N;
 
-		VectorT<T, Dimension> v;
+		Vector<T, Dimension> v;
 
 		constexpr Position() noexcept = default;
 
@@ -28,7 +28,7 @@ namespace X
 		template <class U>
 		constexpr explicit Position(Position<U, Dimension> const& r) noexcept : v{ r.v } {}
 
-		constexpr Position(VectorT<T, Dimension> const& r) noexcept : v{ r } {}
+		constexpr Position(Vector<T, Dimension> const& r) noexcept : v{ r } {}
 
 
 		template <class U>
@@ -61,7 +61,7 @@ namespace X
 	{
 		static constexpr uint32 Dimension = N;
 
-		VectorT<T, Dimension> v;
+		Vector<T, Dimension> v;
 
 		constexpr Offset() noexcept = default;
 

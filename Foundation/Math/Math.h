@@ -2,6 +2,9 @@
 #include "Math/BasicMath.h"
 
 #include "Math/Angle.h"
+#include "Math/Vector.h"
+#include "Math/Matrix.h"
+#include "Math/Quaternion.h"
 
 
 #include <limits>
@@ -13,43 +16,41 @@ namespace X
 	{
 
 
-		/*
-		*	@return: angle in [0, PI] in radians.
-		*/
+		//	@return: angle in [0, PI].
 		template <typename T, uint32 N>
-		Radian<T> Angle(VectorT<T, N> const& from, VectorT<T, N> const& to)
+		constexpr static Radian<T> Angle(Vector<T, N> const& from, Vector<T, N> const& to)
 		{
-			return std::acos(Dot(from, to) / (from.Length() * to.Length()));
+			return ACos(Dot(from, to) / (from.Length() * to.Length()));
 		}
 
 		template <typename T>
-		QuaternionT<T> QuaternionFromMatrix(Matrix4T<T> const& rotationMatrix);
+		Quaternion<T> QuaternionFromMatrix(Matrix4T<T> const& rotationMatrix);
 		template <typename T>
-		Matrix4T<T> MatrixFromQuaternion(QuaternionT<T> const& quaternion);
+		Matrix4T<T> MatrixFromQuaternion(Quaternion<T> const& quaternion);
 
 		/*
 		*	for 3 dimension vector, affine division will be done on the result vector.
 		*/
 		template <typename T, uint32 N>
-		VectorT<T, N> Transform(Matrix4T<T> const& matrix, VectorT<T, N> const& vector, T const& lastComponent = T(1));
+		Vector<T, N> Transform(Matrix4T<T> const& matrix, Vector<T, N> const& vector, T const& lastComponent = T(1));
 
 		template <typename T>
-		VectorT<T, 3> RotateByQuaternion(QuaternionT<T> const& quaternion, VectorT<T, 3> const& vector);
+		Vector<T, 3> RotateByQuaternion(Quaternion<T> const& quaternion, Vector<T, 3> const& vector);
 
 		template <typename T, uint32 N>
-		VectorT<T, N> TransformDirection(Matrix4T<T> const& matrix, VectorT<T, N> const& vector);
+		Vector<T, N> TransformDirection(Matrix4T<T> const& matrix, Vector<T, N> const& vector);
 
 		template <typename T>
 		Matrix4T<T> TranslationMatrix(T const& x, T const& y, T const& z);
 		template <typename T>
-		Matrix4T<T> TranslationMatrix(VectorT<T, 3> const& v);
+		Matrix4T<T> TranslationMatrix(Vector<T, 3> const& v);
 
 		template <typename T>
 		Matrix4T<T> ScalingMatrix(T const& s);
 		template <typename T>
 		Matrix4T<T> ScalingMatrix(T const& sx, T const& sy, T const& sz);
 		template <typename T>
-		Matrix4T<T> ScalingMatrix(VectorT<T, 3> const& s);
+		Matrix4T<T> ScalingMatrix(Vector<T, 3> const& s);
 
 		template <typename T>
 		Matrix4T<T> RotationMatrixX(T const& angleX);
@@ -60,16 +61,16 @@ namespace X
 		template <typename T>
 		Matrix4T<T> RotationMatrix(T const& angle, T const& x, T const& y, T const& z);
 		template <typename T>
-		Matrix4T<T> RotationMatrix(T const& angle, VectorT<T, 3> const& axis);
+		Matrix4T<T> RotationMatrix(T const& angle, Vector<T, 3> const& axis);
 		template <typename T>
-		Matrix4T<T> RotationMatrixFromTo(VectorT<T, 3> const& from, VectorT<T, 3> const& to);
+		Matrix4T<T> RotationMatrixFromTo(Vector<T, 3> const& from, Vector<T, 3> const& to);
 
 		template <typename T>
-		QuaternionT<T> RotationQuaternion(T const& angle, T const& x, T const& y, T const& z);
+		Quaternion<T> RotationQuaternion(T const& angle, T const& x, T const& y, T const& z);
 		template <typename T>
-		QuaternionT<T> RotationQuaternion(T const& angle, VectorT<T, 3> const& axis);
+		Quaternion<T> RotationQuaternion(T const& angle, Vector<T, 3> const& axis);
 		template <typename T>
-		QuaternionT<T> RotationQuaternionFromTo(VectorT<T, 3> const& from, VectorT<T, 3> const& to);
+		Quaternion<T> RotationQuaternionFromTo(Vector<T, 3> const& from, Vector<T, 3> const& to);
 
 		/*
 		*	@to: face to direction in world space.
@@ -79,7 +80,7 @@ namespace X
 		*	@return: matrix only contains rotation component.
 		*/
 		template <typename T>
-		Matrix4T<T> FaceToMatrix(VectorT<T, 3> const& to, VectorT<T, 3> const& up, VectorT<T, 3> const& localFront, VectorT<T, 3> const& localUp);
+		Matrix4T<T> FaceToMatrix(Vector<T, 3> const& to, Vector<T, 3> const& up, Vector<T, 3> const& localFront, Vector<T, 3> const& localUp);
 		/*
 		*	@to: face to direction in world space.
 		*	@up: up direction in world space as reference.
@@ -87,7 +88,7 @@ namespace X
 		*	@localUp: up reference direction in local space.
 		*/
 		template <typename T>
-		QuaternionT<T> FaceToQuaternion(VectorT<T, 3> const& to, VectorT<T, 3> const& up, VectorT<T, 3> const& localFront, VectorT<T, 3> const& localUp);
+		Quaternion<T> FaceToQuaternion(Vector<T, 3> const& to, Vector<T, 3> const& up, Vector<T, 3> const& localFront, Vector<T, 3> const& localUp);
 
 		/*
 		*	Create a view matrix of camera. With assumption of camera front is +z.
@@ -97,7 +98,7 @@ namespace X
 		*	@return: view matrix.
 		*/
 		template <typename T>
-		Matrix4T<T> LookToViewMatrix(VectorT<T, 3> const& eye, VectorT<T, 3> const& to, VectorT<T, 3> const& up);
+		Matrix4T<T> LookToViewMatrix(Vector<T, 3> const& eye, Vector<T, 3> const& to, Vector<T, 3> const& up);
 
 
 		template <typename T>

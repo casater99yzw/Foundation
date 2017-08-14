@@ -23,10 +23,10 @@ namespace X
 		typedef ValueType const& ConstReference;
 
 	public:
-		RayT(VectorT<T, 3> const& origin, VectorT<T, 3> const& direction)
+		RayT(Vector<T, 3> const& origin, Vector<T, 3> const& direction)
 			: origin_(origin), direction_(direction.Normalize())
 		{
-			auto& zero = VectorT<T, 3>::Zero;
+			auto& zero = Vector<T, 3>::Zero;
 			assert(direction != zero);
 		}
 		RayT(RayT const& r)
@@ -57,21 +57,21 @@ namespace X
 			}
 		}
 
-		VectorT<T, 3> const& GetOrigin() const
+		Vector<T, 3> const& GetOrigin() const
 		{
 			return origin_;
 		}
-		VectorT<T, 3> const& GetDirection() const
+		Vector<T, 3> const& GetDirection() const
 		{
 			return direction_;
 		}
-		VectorT<T, 3> const& GetPoint(T const& t) const
+		Vector<T, 3> const& GetPoint(T const& t) const
 		{
 			return origin_ + t * direction_;
 		}
 	private:
-		VectorT<T, 3> origin_;
-		VectorT<T, 3> direction_;
+		Vector<T, 3> origin_;
+		Vector<T, 3> direction_;
 	};
 	typedef RayT<float32> Ray;
 
@@ -105,7 +105,7 @@ namespace X
 		typedef ValueType const& ConstReference;
 
 	public:
-		PlaneT(VectorT<T, 3> const& normal, T const& distance)
+		PlaneT(Vector<T, 3> const& normal, T const& distance)
 			: normal_(normal), distance_(distance)
 		{
 		}
@@ -138,7 +138,7 @@ namespace X
 			}
 		}
 
-		VectorT<T, 3> const& GetNormal() const
+		Vector<T, 3> const& GetNormal() const
 		{
 			return normal_;
 		}
@@ -148,7 +148,7 @@ namespace X
 		}
 
 	private:
-		VectorT<T, 3> normal_;
+		Vector<T, 3> normal_;
 		T distance_;
 	};
 	typedef PlaneT<float32> Plane;

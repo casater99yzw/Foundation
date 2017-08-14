@@ -12,7 +12,7 @@
 #include <cmath>
 
 template <typename T>
-QuaternionT<T> QuaternionFromMatrix(Matrix4T<T> const& rotationMatrix)
+Quaternion<T> QuaternionFromMatrix(Matrix4T<T> const& rotationMatrix)
 {
 	// see Real-Time Rendering, 3rd. 4.3.2 Quaternion Transforms.
 	// code modified from From paper 'Quaternion to Matrix and Back', by ID software, 2005.
@@ -58,14 +58,14 @@ QuaternionT<T> QuaternionFromMatrix(Matrix4T<T> const& rotationMatrix)
 		y = (rotationMatrix(1, 2) + rotationMatrix(2, 1)) * s;
 	}
 
-	// return QuaternionT<T>(x, y, z, w).Normalize();
-	return QuaternionT<T>(x, y, z, w);
+	// return Quaternion<T>(x, y, z, w).Normalize();
+	return Quaternion<T>(x, y, z, w);
 }
 template floatQ QuaternionFromMatrix(floatM44 const& rotationMatrix);
 
 
 template <typename T>
-Matrix4T<T> MatrixFromQuaternion(QuaternionT<T> const& quaternion)
+Matrix4T<T> MatrixFromQuaternion(Quaternion<T> const& quaternion)
 {
 	// see Real-Time Rendering, 3rd. 4.3.2 Quaternion Transforms
 	// or Mathematics for 3D Game Programming and Computer Graphics, 3rd. 4.6.2 Rotations with Quaternions
@@ -94,9 +94,9 @@ Matrix4T<T> MatrixFromQuaternion(QuaternionT<T> const& quaternion)
 template floatM44 MatrixFromQuaternion(floatQ const& quaternion);
 
 template <typename T, uint32 N>
-VectorT<T, N> Transform(Matrix4T<T> const& matrix, VectorT<T, N> const& vector, T const& lastComponent)
+Vector<T, N> Transform(Matrix4T<T> const& matrix, Vector<T, N> const& vector, T const& lastComponent)
 {
-	VectorT<T, N> temp;
+	Vector<T, N> temp;
 	MathHelper::TransformHelper<T, N>::DoTransform(const_cast<T*>(&temp[0]), &matrix[0], &vector[0], lastComponent);
 	return temp;
 }
@@ -104,7 +104,7 @@ template V3F32 Transform(floatM44 const& matrix, V3F32 const& vector, float32 co
 template V4F32 Transform(floatM44 const& matrix, V4F32 const& vector, float32 const& lastComponent);
 
 template <typename T>
-VectorT<T, 3> RotateByQuaternion(QuaternionT<T> const& quaternion, VectorT<T, 3> const& vector)
+Vector<T, 3> RotateByQuaternion(Quaternion<T> const& quaternion, Vector<T, 3> const& vector)
 {
 	// see Mathematics for 3D Game Programming and Computer Graphics, 3rd. 4.6.2 Rotations with Quaternions
 
@@ -117,16 +117,16 @@ VectorT<T, 3> RotateByQuaternion(QuaternionT<T> const& quaternion, VectorT<T, 3>
 	T const b(2 * Dot(quaternion.V(), vector));
 	T const c(quaternion.W() + quaternion.W());
 
-	VectorT<T, 3> crossV(Cross(quaternion.V(), vector)); // quaternion.V CROSS vector
+	Vector<T, 3> crossV(Cross(quaternion.V(), vector)); // quaternion.V CROSS vector
 
 	return a * vector + b * quaternion.V() + c * crossV;
 }
 template V3F32 RotateByQuaternion(floatQ const& quaternion, V3F32 const& vector);
 
 template <typename T, uint32 N>
-VectorT<T, N> TransformDirection(Matrix4T<T> const& matrix, VectorT<T, N> const& vector)
+Vector<T, N> TransformDirection(Matrix4T<T> const& matrix, Vector<T, N> const& vector)
 {
-	VectorT<T, N> temp;
+	Vector<T, N> temp;
 	MathHelper::TransformHelper<T, N>::DoTransformDirection(const_cast<T*>(&temp[0]), &matrix[0], &vector[0]);
 	return temp;
 }
@@ -146,7 +146,7 @@ Matrix4T<T> TranslationMatrix(T const& x, T const& y, T const& z)
 template floatM44 TranslationMatrix(float32 const& x, float32 const& y, float32 const& z);
 
 template <typename T>
-Matrix4T<T> TranslationMatrix(VectorT<T, 3> const& v)
+Matrix4T<T> TranslationMatrix(Vector<T, 3> const& v)
 {
 	return TranslationMatrix(v.X(), v.Y(), v.Z());
 }
@@ -171,7 +171,7 @@ Matrix4T<T> ScalingMatrix(T const& sx, T const& sy, T const& sz)
 template floatM44 ScalingMatrix(float32 const& sx, float32 const& sy, float32 const& sz);
 
 template <typename T>
-Matrix4T<T> ScalingMatrix(VectorT<T, 3> const& s)
+Matrix4T<T> ScalingMatrix(Vector<T, 3> const& s)
 {
 	return ScalingMatrix(s.X(), s.Y(), s.Z());
 }
@@ -219,19 +219,19 @@ template floatM44 RotationMatrixZ(float32 const& angleZ);
 template <typename T>
 Matrix4T<T> RotationMatrix(T const& angle, T const& x, T const& y, T const& z)
 {
-	return RotationMatrix(angle, VectorT<T, 3>(x, y, z));
+	return RotationMatrix(angle, Vector<T, 3>(x, y, z));
 }
 template floatM44 RotationMatrix(float32 const& angle, float32 const& x, float32 const& y, float32 const& z);
 
 template <typename T>
-Matrix4T<T> RotationMatrix(T const& angle, VectorT<T, 3> const& axis)
+Matrix4T<T> RotationMatrix(T const& angle, Vector<T, 3> const& axis)
 {
 	// 0 vector
 	if (axis.LengthSquared() == 0)
 	{
 		return Matrix4T<T>::Zero;
 	}
-	VectorT<T, 3> naxis = axis.Normalize();
+	Vector<T, 3> naxis = axis.Normalize();
 	T ux = naxis.X();
 	T uy = naxis.Y();
 	T uz = naxis.Z();
@@ -270,15 +270,15 @@ Matrix4T<T> RotationMatrix(T const& angle, VectorT<T, 3> const& axis)
 template floatM44 RotationMatrix(float32 const& angle, V3F32 const& axis);
 
 template <typename T>
-Matrix4T<T> RotationMatrixFromTo(VectorT<T, 3> const& from, VectorT<T, 3> const& to)
+Matrix4T<T> RotationMatrixFromTo(Vector<T, 3> const& from, Vector<T, 3> const& to)
 {
 	// 0 vector
 	if (from.LengthSquared() == 0 || to.LengthSquared() == 0)
 	{
 		return Matrix4T<T>::Zero;
 	}
-	VectorT<T, 3> ufrom = from.Normalize();
-	VectorT<T, 3> uto = to.Normalize();
+	Vector<T, 3> ufrom = from.Normalize();
+	Vector<T, 3> uto = to.Normalize();
 
 	Matrix4T<T> temp;
 	T* resultArray = const_cast<T*>(temp.GetArray());
@@ -316,64 +316,64 @@ template floatM44 RotationMatrixFromTo(V3F32 const& from, V3F32 const& to);
 
 
 template <typename T>
-QuaternionT<T> RotationQuaternion(T const& angle, T const& x, T const& y, T const& z)
+Quaternion<T> RotationQuaternion(T const& angle, T const& x, T const& y, T const& z)
 {
-	return RotationQuaternion(angle, VectorT<T, 3>(x, y, z));
+	return RotationQuaternion(angle, Vector<T, 3>(x, y, z));
 }
 template floatQ RotationQuaternion(float32 const& angle, float32 const& x, float32 const& y, float32 const& z);
 
 template <typename T>
-QuaternionT<T> RotationQuaternion(T const& angle, VectorT<T, 3> const& axis)
+Quaternion<T> RotationQuaternion(T const& angle, Vector<T, 3> const& axis)
 {
 	if (Equal<T>(axis.LengthSquared(), 0))
 	{
-		return QuaternionT<T>::Identity;
+		return Quaternion<T>::Identity;
 	}
 	T halfAngle = T(0.5) * angle;
 	T sha = std::sin(halfAngle);
 	T cha = std::cos(halfAngle);
-	return QuaternionT<T>(sha * axis.Normalize(), cha);
+	return Quaternion<T>(sha * axis.Normalize(), cha);
 }
 template floatQ RotationQuaternion(float32 const& angle, V3F32 const& axis);
 
 template <typename T>
-QuaternionT<T> RotationQuaternionFromTo(VectorT<T, 3> const& from, VectorT<T, 3> const& to)
+Quaternion<T> RotationQuaternionFromTo(Vector<T, 3> const& from, Vector<T, 3> const& to)
 {
-	VectorT<T, 3> uFrom = from.Normalize();
-	VectorT<T, 3> uTo = to.Normalize();
+	Vector<T, 3> uFrom = from.Normalize();
+	Vector<T, 3> uTo = to.Normalize();
 
 	T cos = Dot(uFrom, uTo);
 	if (Equal<T>(cos, T(1)))
 	{
-		return QuaternionT<T>::Identity;
+		return Quaternion<T>::Identity;
 	}
 	else if (Equal<T>(cos, T(-1)))
 	{
-		return QuaternionT<T>(1, 0, 0, 0);
+		return Quaternion<T>(1, 0, 0, 0);
 	}
-	VectorT<T, 3> axis = Cross(uFrom, uTo);
+	Vector<T, 3> axis = Cross(uFrom, uTo);
 
 	// 	sin(A/2)=+-((1-cosA)/2)^(1/2), here only positive
 	// 	cos(A/2)=+-((1+cosA)/2)^(1/2), here only positive
 	T sha = std::sqrt(T((1 - cos) * 0.5));
 	T cha = std::sqrt(T((1 + cos) * 0.5));
-	return QuaternionT<T>(sha * axis, cha).Normalize();
+	return Quaternion<T>(sha * axis, cha).Normalize();
 }
 template floatQ RotationQuaternionFromTo(V3F32 const& from, V3F32 const& to);
 
 namespace
 {
 	template <typename T>
-	Matrix4T<T> BaseMatrixByZReferenceY(VectorT<T, 3> const& zAxis, VectorT<T, 3> const& yAxis, bool transpose = false)
+	Matrix4T<T> BaseMatrixByZReferenceY(Vector<T, 3> const& zAxis, Vector<T, 3> const& yAxis, bool transpose = false)
 	{
-		VectorT<T, 3> z = zAxis.Normalize();
-		VectorT<T, 3> l = Cross(yAxis, z);
+		Vector<T, 3> z = zAxis.Normalize();
+		Vector<T, 3> l = Cross(yAxis, z);
 		if (l.LengthSquared() == 0)
 		{
 			return Matrix4T<T>::Zero;
 		}
-		VectorT<T, 3> x = l.Normalize();
-		VectorT<T, 3> y = Cross(z, x);
+		Vector<T, 3> x = l.Normalize();
+		Vector<T, 3> y = Cross(z, x);
 
 		Matrix4T<T> matrix;
 		T* resultArray = const_cast<T*>(matrix.GetArray());
@@ -417,7 +417,7 @@ namespace
 }
 
 template <typename T>
-Matrix4T<T> FaceToMatrix(VectorT<T, 3> const& to, VectorT<T, 3> const& up, VectorT<T, 3> const& localFront, VectorT<T, 3> const& localUp)
+Matrix4T<T> FaceToMatrix(Vector<T, 3> const& to, Vector<T, 3> const& up, Vector<T, 3> const& localFront, Vector<T, 3> const& localUp)
 {
 	if (to.LengthSquared() == 0)
 	{
@@ -445,34 +445,34 @@ Matrix4T<T> FaceToMatrix(VectorT<T, 3> const& to, VectorT<T, 3> const& up, Vecto
 template floatM44 FaceToMatrix(V3F32 const& to, V3F32 const& up, V3F32 const& localFront, V3F32 const& localUp);
 
 template <typename T>
-QuaternionT<T> FaceToQuaternion(VectorT<T, 3> const& to, VectorT<T, 3> const& up, VectorT<T, 3> const& localFront, VectorT<T, 3> const& localUp)
+Quaternion<T> FaceToQuaternion(Vector<T, 3> const& to, Vector<T, 3> const& up, Vector<T, 3> const& localFront, Vector<T, 3> const& localUp)
 {
 	if (to.LengthSquared() == 0)
 	{
-		return QuaternionT<T>::Zero;
+		return Quaternion<T>::Zero;
 	}
 	if (up.LengthSquared() == 0)
 	{
-		return QuaternionT<T>::Zero;
+		return Quaternion<T>::Zero;
 	}
 	if (localFront.LengthSquared() == 0)
 	{
-		return QuaternionT<T>::Zero;
+		return Quaternion<T>::Zero;
 	}
 	if (localUp.LengthSquared() == 0)
 	{
-		return QuaternionT<T>::Zero;
+		return Quaternion<T>::Zero;
 	}
 	// see FaceToMatrix
-	QuaternionT<T> world = QuaternionFromMatrix(BaseMatrixByZReferenceY(to, up, false));
-	QuaternionT<T> localInverse = QuaternionFromMatrix(BaseMatrixByZReferenceY(localFront, localUp, true));
+	Quaternion<T> world = QuaternionFromMatrix(BaseMatrixByZReferenceY(to, up, false));
+	Quaternion<T> localInverse = QuaternionFromMatrix(BaseMatrixByZReferenceY(localFront, localUp, true));
 	return world * localInverse;
 }
 template floatQ FaceToQuaternion(V3F32 const& to, V3F32 const& up, V3F32 const& localFront, V3F32 const& localUp);
 
 
 template <typename T>
-Matrix4T<T> LookToViewMatrix(VectorT<T, 3> const& eye, VectorT<T, 3> const& to, VectorT<T, 3> const& up)
+Matrix4T<T> LookToViewMatrix(Vector<T, 3> const& eye, Vector<T, 3> const& to, Vector<T, 3> const& up)
 {
 	if (to.LengthSquared() == 0)
 	{
@@ -485,9 +485,9 @@ Matrix4T<T> LookToViewMatrix(VectorT<T, 3> const& eye, VectorT<T, 3> const& to, 
 	}
 
 
-	VectorT<T, 3> zAxis(to.Normalize());
-	VectorT<T, 3> xAxis(Cross(up, zAxis).Normalize());
-	VectorT<T, 3> yAxis(Cross(zAxis, xAxis));
+	Vector<T, 3> zAxis(to.Normalize());
+	Vector<T, 3> xAxis(Cross(up, zAxis).Normalize());
+	Vector<T, 3> yAxis(Cross(zAxis, xAxis));
 
 	Matrix4T<T> temp;
 	T* resultArray = const_cast<T*>(temp.GetArray());

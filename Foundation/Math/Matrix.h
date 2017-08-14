@@ -1,27 +1,20 @@
-/*
-*	Code partially come from KlayGE, with some simplification and improvement.
-*/
 #pragma once
 
 #include "Core/BasicType.h"
 #include "Math/MathHelper.h"
 #include "Math/BasicMath.h"
 #include "Math/Vector.h"
-#include "Math/Size.h"
+#include "Math/PositionAndOffset.h"
 
-
-#include <array>
 
 namespace X
 {
-
-
 	// Column major matrix, column major storage.
 	template <class T, uint32 R, uint32 C>
-	class MatrixT;
+	class Matrix;
 
 	template <class T>
-	class MatrixT<T, 3, 3>
+	class Matrix<T, 3, 3>
 	{
 
 	public:
@@ -29,8 +22,8 @@ namespace X
 		static constexpr uint32 C = 3;
 		static constexpr uint32 Count = R * C;
 
-		static MatrixT const Zero;
-		static MatrixT const Identity;
+		static Matrix const Zero;
+		static Matrix const Identity;
 
 		union
 		{
@@ -40,62 +33,49 @@ namespace X
 					_01, _11, _21,
 					_02, _12, _22;
 			};
-			VectorT<VectorT<T, C>, R> v;
+			Vector<Vector<T, C>, R> v;
 		};
 
 
-		constexpr MatrixT() noexcept = default;
+		constexpr Matrix() noexcept = default;
 		/*
 		*	Create a scalar equivalent matrix, fill principal diagonal with r.
 		*/
-		explicit constexpr MatrixT(T const& r) noexcept : v({ r, 0, 0 }, { 0, r, 0 }, { 0, 0, r }) {}
+		explicit constexpr Matrix(T const& r) noexcept : v({ r, 0, 0 }, { 0, r, 0 }, { 0, 0, r }) {}
 
 		/*
 		*	parameters subscript: row, column
 		*/
-		constexpr MatrixT(
+		constexpr Matrix(
 			T const& m00, T const& m10, T const& m20,
 			T const& m01, T const& m11, T const& m21,
 			T const& m02, T const& m12, T const& m22) noexcept
 			: v({ m00, m10, m20 }, { m01, m11, m21 }, { m02, m12, m22 }) {}
 
-		constexpr MatrixT(VectorT<T, C> const& c0, VectorT<T, C> const& c1, VectorT<T, C> const& c2) noexcept : v(c0, c1, c2) {}
-		constexpr MatrixT(VectorT<VectorT<T, C>, R> const& rows) noexcept : v(rows) {}
-
-
-		constexpr MatrixT(MatrixT const& r) noexcept : v(r.v) {}
-		template <class U>
-		MatrixT(MatrixT<U, R, C> const& r) : v(r.v) {}
-
-
+		constexpr Matrix(Vector<T, C> const& c0, Vector<T, C> const& c1, Vector<T, C> const& c2) noexcept : v(c0, c1, c2) {}
 
 		constexpr T const& operator[](Index2UI index) const noexcept { return v[index.Y()][index.X()]; }
 		constexpr T& operator[](Index2UI index) noexcept { return v[index.Y()][index.X()]; }
 
-		constexpr VectorT<T, C> const& operator[](uint32 index) const { return v[index]; }
-		constexpr VectorT<T, C>& operator[](uint32 index) { return v[index]; }
+		constexpr Vector<T, C> const& operator[](uint32 index) const { return v[index]; }
+		constexpr Vector<T, C>& operator[](uint32 index) { return v[index]; }
 
 
-		constexpr VectorT<T, C> const Row(uint32 index) const noexcept { return VectorT<T, C> result(v[0][index], v[1][index], v[2][index]); }
-		constexpr VectorT<T, R> const& Column(uint32 index) const noexcept { return v[index]; }
+		constexpr Vector<T, C> const Row(uint32 index) const noexcept { return Vector<T, C> result(v[0][index], v[1][index], v[2][index]); }
+		constexpr Vector<T, R> const& Column(uint32 index) const noexcept { return v[index]; }
 
-		constexpr MatrixT& operator=(MatrixT const& r) noexcept { v = r.v; return *this; }
-		template <class U>
-		constexpr MatrixT const& operator=(MatrixT<U, R, C> const& r) noexcept { v = r.v; return *this; }
+		constexpr Matrix const& operator+() const noexcept { return *this; }
+		constexpr Matrix operator-() const noexcept { return Matrix(-v); }
 
-		constexpr MatrixT const& operator+() const noexcept { return *this; }
-		constexpr MatrixT operator-() const noexcept { return MatrixT(-v); }
-
-		constexpr MatrixT Transposed() const noexcept
+		constexpr Matrix Transposed() const noexcept
 		{
-			return MatrixT(
-				v[0][0], v[0][1], v[0][2], v[0][3],
-				v[1][0], v[1][1], v[1][2], v[1][3],
-				v[2][0], v[2][1], v[2][2], v[2][3],
-				v[3][0], v[3][1], v[3][2], v[3][3]);
+			return Matrix(
+				v[0][0], v[0][1], v[0][2],
+				v[1][0], v[1][1], v[1][2],
+				v[2][0], v[2][1], v[2][2]);
 		}
 
-		constexpr MatrixT Inversed() const noexcept
+		constexpr Matrix Inversed() const noexcept
 		{
 			T	m11 = v[0][0], m21 = v[1][0], m31 = v[2][0],
 				m12 = v[0][1], m22 = v[1][1], m32 = v[2][1],
@@ -118,12 +98,12 @@ namespace X
 			if (BasicMath::CEqual<T>(determinant, 0))
 			{
 				assert(false);
-				return MatrixT(T(1));
+				return Matrix(T(1));
 			}
 
 			T inverseDeterminant = T(1) / determinant;
 
-			return MatrixT(
+			return Matrix(
 				_2233_2332 * inverseDeterminant,
 				-_2133_2331 * inverseDeterminant,
 				_2132_2231 * inverseDeterminant,
@@ -160,18 +140,20 @@ namespace X
 		{
 			return v.Data()->Data();
 		}
+
+		constexpr Matrix(Vector<Vector<T, C>, R> const& rows) noexcept : v(rows) {}
 	};
 
 	template <class T>
-	MatrixT<T, 3, 3> const MatrixT<T, 3, 3>::Zero = MatrixT(T(0));
+	Matrix<T, 3, 3> const Matrix<T, 3, 3>::Zero = Matrix(T(0));
 
 	template <class T>
-	MatrixT<T, 3, 3> const MatrixT<T, 3, 3>::Identity = MatrixT(T(1));
+	Matrix<T, 3, 3> const Matrix<T, 3, 3>::Identity = Matrix(T(1));
 
 	template<class T>
-	constexpr MatrixT<T, 3, 3> operator*(MatrixT<T, 3, 3> const& l, MatrixT<T, 3, 3> const& r) noexcept
+	constexpr Matrix<T, 3, 3> operator*(Matrix<T, 3, 3> const& l, Matrix<T, 3, 3> const& r) noexcept
 	{
-		return MatrixT<T, 3, 3>(
+		return Matrix<T, 3, 3>(
 			r[0][0] * l[0][0] + r[0][1] * l[1][0] + r[0][2] * l[2][0],
 			r[0][0] * l[0][1] + r[0][1] * l[1][1] + r[0][2] * l[2][1],
 			r[0][0] * l[0][2] + r[0][1] * l[1][2] + r[0][2] * l[2][2],
@@ -184,7 +166,7 @@ namespace X
 	}
 
 	template <class T>
-	class MatrixT<T, 4, 4>
+	class Matrix<T, 4, 4>
 	{
 
 	public:
@@ -192,8 +174,8 @@ namespace X
 		static constexpr uint32 C = 4;
 		static constexpr uint32 Count = R * C;
 
-		static MatrixT const Zero;
-		static MatrixT const Identity;
+		static Matrix const Zero;
+		static Matrix const Identity;
 
 		union
 		{
@@ -204,62 +186,54 @@ namespace X
 					_02, _12, _22, _32,
 					_03, _13, _23, _34;
 			};
-			VectorT<VectorT<T, C>, R> v;
+			Vector<Vector<T, C>, R> v;
 		};
 
 
-		constexpr MatrixT() noexcept = default;
+		constexpr Matrix() noexcept = default;
 		/*
 		*	Create a scalar equivalent matrix, fill principal diagonal with r.
 		*/
-		explicit constexpr MatrixT(T const& r) noexcept : v({ r, 0, 0, 0 }, { 0, r, 0, 0 }, { 0, 0, r, 0 }, { 0, 0, 0, r }) {}
+		explicit constexpr Matrix(T const& r) noexcept : v({ r, 0, 0, 0 }, { 0, r, 0, 0 }, { 0, 0, r, 0 }, { 0, 0, 0, r }) {}
 
 		/*
 		*	parameters subscript: row, column
 		*/
-		constexpr MatrixT(T const& m00, T const& m10, T const& m20, T const& m30,
+		constexpr Matrix(
+			T const& m00, T const& m10, T const& m20, T const& m30,
 			T const& m01, T const& m11, T const& m21, T const& m31,
 			T const& m02, T const& m12, T const& m22, T const& m32,
 			T const& m03, T const& m13, T const& m23, T const& m33) noexcept
 			: v({ m00, m10, m20, m30 }, { m01, m11, m21, m31 }, { m02, m12, m22, m32 }, { m03, m13, m23, m33 }) {}
 
-		constexpr MatrixT(VectorT<T, C> const& c0, VectorT<T, C> const& c1, VectorT<T, C> const& c2, VectorT<T, C> const& c3) noexcept : v(c0, c1, c2, c3) {}
-		constexpr MatrixT(VectorT<VectorT<T, C>, R> const& rows) noexcept : v(rows) {}
+		constexpr Matrix(Vector<T, C> const& c0, Vector<T, C> const& c1, Vector<T, C> const& c2, Vector<T, C> const& c3) noexcept : v(c0, c1, c2, c3) {}
 
-
-		constexpr MatrixT(MatrixT const& r) noexcept : v(r.v) {}
 		template <class U>
-		MatrixT(MatrixT<U, R, C> const& r) : v(r.v) {}
-
-
+		constexpr explicit Matrix(Matrix<U, R, C> const& r) noexcept : v(r.v) {}
 
 		constexpr T const& operator[](Index2UI index) const noexcept { return v[index.Y()][index.X()]; }
 		constexpr T& operator[](Index2UI index) noexcept { return v[index.Y()][index.X()]; }
 
-		constexpr VectorT<T, C> const& operator[](uint32 index) const { return v[index]; }
-		constexpr VectorT<T, C>& operator[](uint32 index) { return v[index]; }
+		constexpr Vector<T, C> const& operator[](uint32 index) const { return v[index]; }
+		constexpr Vector<T, C>& operator[](uint32 index) { return v[index]; }
 
 
-		constexpr VectorT<T, C> const Row(uint32 index) const noexcept { return VectorT<T, C> result(v[0][index], v[1][index], v[2][index], v[3][index]); }
-		constexpr VectorT<T, R> const& Column(uint32 index) const noexcept { return v[index]; }
+		constexpr Vector<T, C> const Row(uint32 index) const noexcept { return Vector<T, C> result(v[0][index], v[1][index], v[2][index], v[3][index]); }
+		constexpr Vector<T, R> const& Column(uint32 index) const noexcept { return v[index]; }
 
-		constexpr MatrixT& operator=(MatrixT const& r) noexcept { v = r.v; return *this; }
-		template <class U>
-		constexpr MatrixT const& operator=(MatrixT<U, R, C> const& r) noexcept { v = r.v; return *this; }
+		constexpr Matrix const& operator+() const noexcept { return *this; }
+		constexpr Matrix operator-() const noexcept { return Matrix(-v); }
 
-		constexpr MatrixT const& operator+() const noexcept { return *this; }
-		constexpr MatrixT operator-() const noexcept { return MatrixT(-v); }
-
-		constexpr MatrixT Transposed() const noexcept
+		constexpr Matrix Transposed() const noexcept
 		{
-			return MatrixT(
+			return Matrix(
 				v[0][0], v[0][1], v[0][2], v[0][3],
 				v[1][0], v[1][1], v[1][2], v[1][3],
 				v[2][0], v[2][1], v[2][2], v[2][3],
 				v[3][0], v[3][1], v[3][2], v[3][3]);
 		}
 
-		constexpr MatrixT Inversed() const noexcept
+		constexpr Matrix Inversed() const noexcept
 		{
 			T	m11 = v[0][0], m21 = v[1][0], m31 = v[2][0], m41 = v[3][0],
 				m12 = v[0][1], m22 = v[1][1], m32 = v[2][1], m42 = v[3][1],
@@ -285,12 +259,12 @@ namespace X
 			if (BasicMath::CEqual<T>(determinant, 0))
 			{
 				assert(false);
-				return MatrixT(T(1));
+				return Matrix(T(1));
 			}
 
 			T inverseDeterminant = T(1) / determinant;
 
-			return MatrixT(
+			return Matrix(
 				(m22 * _3344_4334 - m32 * _2344_4324 + m42 * _2334_3324) * inverseDeterminant,
 				(-m21 * _3344_4334 + m31 * _2344_4324 - m41 * _2334_3324) * inverseDeterminant,
 				(m24 * _3142_4132 - m34 * _2142_4122 + m44 * _2132_3122) * inverseDeterminant,
@@ -337,18 +311,20 @@ namespace X
 		{
 			return v.Data()->Data();
 		}
+
+		constexpr Matrix(Vector<Vector<T, C>, R> const& rows) noexcept : v(rows) {}
 	};
 
 	template <class T>
-	MatrixT<T, 4, 4> const MatrixT<T, 4, 4>::Zero = MatrixT(T(0));
+	Matrix<T, 4, 4> const Matrix<T, 4, 4>::Zero = Matrix(T(0));
 
 	template <class T>
-	MatrixT<T, 4, 4> const MatrixT<T, 4, 4>::Identity = MatrixT(T(1));
+	Matrix<T, 4, 4> const Matrix<T, 4, 4>::Identity = Matrix(T(1));
 
 	template<class T>
-	constexpr MatrixT<T, 4, 4> operator*(MatrixT<T, 4, 4> const& l, MatrixT<T, 4, 4> const& r) noexcept
+	constexpr Matrix<T, 4, 4> operator*(Matrix<T, 4, 4> const& l, Matrix<T, 4, 4> const& r) noexcept
 	{
-		return MatrixT<T, 4, 4>(
+		return Matrix<T, 4, 4>(
 				r[0][0] * l[0][0] + r[0][1] * l[1][0] + r[0][2] * l[2][0] + r[0][3] * l[3][0],
 				r[0][0] * l[0][1] + r[0][1] * l[1][1] + r[0][2] * l[2][1] + r[0][3] * l[3][1],
 				r[0][0] * l[0][2] + r[0][1] * l[1][2] + r[0][2] * l[2][2] + r[0][3] * l[3][2],
@@ -369,49 +345,49 @@ namespace X
 
 
 	template<class T, uint32 R, uint32 C>
-	constexpr MatrixT<T, R, C> operator+(MatrixT<T, R, C> const& l, MatrixT<T, R, C> const& r) noexcept
+	constexpr Matrix<T, R, C> operator+(Matrix<T, R, C> const& l, Matrix<T, R, C> const& r) noexcept
 	{
-		return MatrixT<T, R, C>(l.v + r.v);
+		return Matrix<T, R, C>(l.v + r.v);
 	}
 	template<class T, uint32 R, uint32 C>
-	constexpr MatrixT<T, R, C> operator-(MatrixT<T, R, C> const& l, MatrixT<T, R, C> const& r) noexcept
+	constexpr Matrix<T, R, C> operator-(Matrix<T, R, C> const& l, Matrix<T, R, C> const& r) noexcept
 	{
-		return MatrixT<T, R, C>(l.v - r.v);
-	}
-
-	template<class T, uint32 R, uint32 C>
-	constexpr MatrixT<T, R, C> operator*(MatrixT<T, R, C> const& l, T const& r) noexcept
-	{
-		return MatrixT<T, R, C>(l.v * VectorT<T, C>(r));
-	}
-	template<class T, uint32 R, uint32 C>
-	constexpr MatrixT<T, R, C> operator*(T const& l, MatrixT<T, R, C> const& r) noexcept
-	{
-		return MatrixT<T, R, C>(VectorT<T, C>(l) * r.v);
+		return Matrix<T, R, C>(l.v - r.v);
 	}
 
 	template<class T, uint32 R, uint32 C>
-	constexpr MatrixT<T, R, C> operator/(MatrixT<T, R, C> const& l, T const& r) noexcept
+	constexpr Matrix<T, R, C> operator*(Matrix<T, R, C> const& l, T const& r) noexcept
 	{
-		return MatrixT<T, R, C>(l.v * VectorT<T, C>(T(1) / r));
+		return Matrix<T, R, C>(l.v * Vector<T, C>(r));
+	}
+	template<class T, uint32 R, uint32 C>
+	constexpr Matrix<T, R, C> operator*(T const& l, Matrix<T, R, C> const& r) noexcept
+	{
+		return Matrix<T, R, C>(Vector<T, C>(l) * r.v);
 	}
 
 	template<class T, uint32 R, uint32 C>
-	constexpr bool operator==(MatrixT<T, R, C> const& l, MatrixT<T, R, C> const& r) noexcept
+	constexpr Matrix<T, R, C> operator/(Matrix<T, R, C> const& l, T const& r) noexcept
+	{
+		return Matrix<T, R, C>(l.v * Vector<T, C>(T(1) / r));
+	}
+
+	template<class T, uint32 R, uint32 C>
+	constexpr bool operator==(Matrix<T, R, C> const& l, Matrix<T, R, C> const& r) noexcept
 	{
 		return l.v == r.v;
 	}
 	template<class T, uint32 R, uint32 C>
-	constexpr bool operator!=(MatrixT<T, R, C> const& l, MatrixT<T, R, C> const& r) noexcept
+	constexpr bool operator!=(Matrix<T, R, C> const& l, Matrix<T, R, C> const& r) noexcept
 	{
 		return l.v != r.v;
 	}
 
 
 
-	using M33F32 = MatrixT<float32, 3, 3>;
-	using M33F64 = MatrixT<float64, 3, 3>;
-	using M44F32 = MatrixT<float32, 4, 4>;
-	using M44F64 = MatrixT<float64, 4, 4>;
+	using M33F32 = Matrix<float32, 3, 3>;
+	using M33F64 = Matrix<float64, 3, 3>;
+	using M44F32 = Matrix<float32, 4, 4>;
+	using M44F64 = Matrix<float64, 4, 4>;
 
 }

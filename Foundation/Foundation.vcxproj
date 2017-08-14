@@ -21,7 +21,7 @@
     <ClInclude Include="Math\BasicMath.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Geometry.h" />
-    <ClInclude Include="Math\Size.h" />
+    <ClInclude Include="Math\PositionAndOffset.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\MathHelper.h" />
     <ClInclude Include="Math\Matrix.h" />
