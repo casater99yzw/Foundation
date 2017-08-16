@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/BasicType.h"
-#include "Math/Math.h"
+#include "Math/Vector.h"
 
 namespace X
 {
@@ -9,107 +9,45 @@ namespace X
 	class Color
 	{
 	public:
-		Color()
-		{
-		}
-		Color(float32 r, float32 g, float32 b, float32 a)
-			: value_(r, g, b, a)
-		{
-		}
-		Color(Color const& r)
-			: value_(r.value_)
-		{
-		}
-		~Color()
-		{
-		}
+		V4F32 v;
 
-		float32 R() const
-		{
-			return value_.X();
-		}
-		float32 G() const
-		{
-			return value_.Y();
-		}
-		float32 B() const
-		{
-			return value_.Z();
-		}
-		float32 A() const
-		{
-			return value_.W();
-		}
+		constexpr Color() noexcept = default;
+		constexpr Color(float32 r, float32 g, float32 b, float32 a) noexcept : v(r, g, b, a) {}
 
-		friend Color operator +(Color const& l, Color const& r)
-		{
-			Color temp;
-			temp.value_ = l.value_ + r.value_;
-			return temp;
-		}
+		constexpr explicit Color(V4F32 const& v) noexcept : v(v) {}
 
-		friend Color operator -(Color const& l, Color const& r)
-		{
-			Color temp;
-			temp.value_ = l.value_ - r.value_;
-			return temp;
-		}
+		constexpr float32 R() const noexcept { return v.X(); }
+		constexpr float32& R() noexcept { return v.X(); }
+		constexpr float32 G() const noexcept { return v.Y(); }
+		constexpr float32& G() noexcept { return v.Y(); }
+		constexpr float32 B() const noexcept { return v.Z(); }
+		constexpr float32& B() noexcept { return v.Z(); }
+		constexpr float32 A() const noexcept { return v.W(); }
+		constexpr float32& A() noexcept { return v.W(); }
 
-		friend Color operator *(Color const& l, Color const& r)
-		{
-			Color temp;
-			temp.value_ = l.value_ * r.value_;
-			return temp;
-		}
 
-		friend Color operator *(Color const& l, float32 r)
-		{
-			Color temp;
-			temp.value_ = l.value_ * r;
-			return temp;
-		}
-		friend Color operator *(float32 const& l, Color const& r)
-		{
-			Color temp;
-			temp.value_ = l * r.value_;
-			return temp;
-		}
+		constexpr Color const& operator+() const noexcept { return *this; }
+		constexpr Color operator-() const noexcept { return Color(-v); }
 
-		friend Color operator /(Color const& l, float32 const& r)
-		{
-			Color temp;
-			temp.value_ = l.value_ / r;
-			return temp;
-		}
+		constexpr Color& operator+=(Color const& r) noexcept { v += r.v; return *this; }
+		constexpr Color& operator-=(Color const& r) noexcept { v -= r.v; return *this; }
+		constexpr Color& operator*=(Color const& r) noexcept { v *= r.v; return *this; }
+		constexpr Color& operator*=(float32 r) noexcept { v *= r; return *this; }
+		constexpr Color& operator/=(float32 r) noexcept { v /= r; return *this; }
 
-		Color const& operator +() const
-		{
-			return *this; 
-		}
-		Color operator -() const
-		{
-			Color temp;
-			temp.value_ = -value_;
-			return temp;
-		}
+		constexpr V4F32 const& Value() const noexcept { return v; }
 
-		friend bool operator ==(Color const& l, Color const& r)
-		{
-			return l.value_ == r.value_;
-		}
+		float32 const* Data() const noexcept { return v.Data(); }
 
-		friend bool operator !=(Color const& l, Color const& r)
-		{
-			return l.value_ != r.value_;
-		}
-
-		float32 const* GetArray() const
-		{
-			return value_.GetArray();
-		}
-
-	private:
-		V4F32 value_;
 	};
 
+	constexpr bool operator==(Color const& l, Color const& r) noexcept { return l.Value() == r.Value(); }
+	constexpr bool operator!=(Color const& l, Color const& r) noexcept { return l.Value() != r.Value(); }
+
+	constexpr Color operator+(Color const& l, Color const& r) noexcept { return Color(l.Value() + r.Value()); }
+	constexpr Color operator-(Color const& l, Color const& r) noexcept { return Color(l.Value() - r.Value()); }
+	constexpr Color operator*(Color const& l, Color const& r) noexcept { return Color(l.Value() * r.Value()); }
+	constexpr Color operator*(Color const& l, float32 r) noexcept { return Color(l.Value() * r); }
+	constexpr Color operator*(float32 l, Color const& r) noexcept { return Color(l * r.Value()); }
+	constexpr Color operator/(Color const& l, float32 r) noexcept { return Color(l.Value() / r); }
 }
